@@ -11,6 +11,10 @@ logger = get_logger(__name__)
 
 settings = get_settings()
 
+allowed_origins = [settings.frontend_url.rstrip("/")]
+if settings.local_frontend_url:
+    allowed_origins.append(settings.local_frontend_url.rstrip("/"))
+
 app = FastAPI(
     title="Rocket Mortgage FAQ Bot",
     description="RAG-powered FAQ assistant for Rocket Mortgage",
@@ -19,11 +23,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        settings.frontend_url,
-        "http://localhost:5173",
-        "http://localhost:3000",
-    ],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 from functools import lru_cache
+from typing import Optional
 
 
 class Settings(BaseSettings):
@@ -10,7 +11,8 @@ class Settings(BaseSettings):
     embedding_provider: str = "local"  # "local" (sentence-transformers) or "api" (HF Inference API)
     llm_model: str = "google/gemini-2.0-flash-001"
     openrouter_base_url: str = "https://openrouter.ai/api/v1"
-    frontend_url: str = "http://localhost:5173"
+    frontend_url: str = "https://rocket-faq-frontend.vercel.app"
+    local_frontend_url: Optional[str] = None
     top_k: int = 5
     log_level: str = "INFO"
 
