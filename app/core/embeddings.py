@@ -45,51 +45,41 @@ class LocalEmbeddings(EmbeddingsProvider):
 
 
 class APIEmbeddings(EmbeddingsProvider):
-    """HuggingFace Inference API — zero ML dependencies."""
-
-    HF_API_BASE = "https://api-inference.huggingface.co/pipeline/feature-extraction"
+    """HuggingFace Inference Providers API — zero ML dependencies."""
 
     def __init__(self):
+        from huggingface_hub import InferenceClient
+
         settings = get_settings()
         model_id = settings.embedding_model
         if not model_id.startswith("sentence-transformers/"):
             model_id = f"sentence-transformers/{model_id}"
-        self._url = f"{self.HF_API_BASE}/{model_id}"
-        logger.info("loading_api_embeddings", url=self._url)
+        self._model_id = model_id
+        self._client = InferenceClient(
+            token=settings.hf_token,
+            timeout=30,
+        )
+        logger.info("loading_api_embeddings", model=model_id)
 
     @staticmethod
     def _normalize(vec: list[float]) -> list[float]:
         norm = math.sqrt(sum(x * x for x in vec))
         return [x / norm for x in vec] if norm > 0 else vec
 
-    def _post(self, inputs: str | list[str]) -> list:
-        import requests
-
-        resp = requests.post(
-            self._url,
-            json={"inputs": inputs, "options": {"wait_for_model": True}},
-            timeout=30,
+    def _embed(self, text: str) -> list[float]:
+        result = self._client.feature_extraction(
+            text, model=self._model_id, normalize=True
         )
-        resp.raise_for_status()
-        return resp.json()
-
-    @staticmethod
-    def _mean_pool(token_embeddings: list[list[float]]) -> list[float]:
-        n = len(token_embeddings)
-        dim = len(token_embeddings[0])
-        return [sum(token_embeddings[t][d] for t in range(n)) / n for d in range(dim)]
-
-    def _to_vector(self, raw) -> list[float]:
-        if isinstance(raw, list) and raw and isinstance(raw[0], list):
-            return self._normalize(self._mean_pool(raw))
-        return self._normalize(raw)
+        vec = result.tolist() if hasattr(result, "tolist") else result
+        if vec and isinstance(vec[0], list):
+            vec = vec[0]
+        return self._normalize(vec)
 
     def embed_query(self, text: str) -> list[float]:
-        return self._to_vector(self._post(text))
+        return self._embed(text)
 
     def embed_documents(self, texts: list[str]) -> list[list[float]]:
-        results = self._post(texts)
-        return [self._to_vector(r) for r in results]
+        return [self._embed(t) for t in texts]
 
 
 _provider: EmbeddingsProvider | None = None

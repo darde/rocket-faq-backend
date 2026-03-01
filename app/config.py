@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     embedding_provider: str = "local"  # "local" (sentence-transformers) or "api" (HF Inference API)
     llm_model: str = "google/gemini-2.0-flash-001"
     openrouter_base_url: str = "https://openrouter.ai/api/v1"
+    hf_token: Optional[str] = None
     frontend_url: str = "https://rocket-faq-frontend.vercel.app"
     local_frontend_url: Optional[str] = None
     top_k: int = 5
