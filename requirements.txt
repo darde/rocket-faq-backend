@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+pydantic-settings
+pinecone
+langchain
+langchain-openai
+langchain-huggingface
+langchain-pinecone
+sentence-transformers
+openai
+python-dotenv
+structlog
