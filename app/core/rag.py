@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 from app.core.vectorstore import search
 from app.core.llm import chat_completion
+from app.core.cache import get_cached_rag_response, set_cached_rag_response
 from app.observability.logger import get_logger
 
 logger = get_logger(__name__)
@@ -41,6 +42,11 @@ def generate_answer(query: str, top_k: int | None = None) -> RAGResponse:
     """Full RAG pipeline: retrieve relevant chunks, then generate an answer."""
     logger.info("rag_pipeline_start", query=query[:100])
 
+    if top_k is None:
+        cached = get_cached_rag_response(query)
+        if cached is not None:
+            return cached
+
     retrieved_docs = search(query, top_k=top_k)
 
     context_parts = []
@@ -76,5 +82,10 @@ def generate_answer(query: str, top_k: int | None = None) -> RAGResponse:
         for doc in retrieved_docs
     ]
 
+    response = RAGResponse(answer=answer, sources=sources, query=query)
+
+    if top_k is None:
+        set_cached_rag_response(query, response)
+
     logger.info("rag_pipeline_complete", query=query[:100], sources_used=len(sources))
-    return RAGResponse(answer=answer, sources=sources, query=query)
+    return response

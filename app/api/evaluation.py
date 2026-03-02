@@ -1,15 +1,19 @@
 from __future__ import annotations
 
-from fastapi import APIRouter
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, Request
+from pydantic import BaseModel, Field
 
+from app.config import get_settings
 from app.core.vectorstore import search
 from app.core.rag import generate_answer
 from app.evaluation.metrics import evaluate_retrieval, mean_reciprocal_rank
 from app.evaluation.judge import evaluate_response
+from app.middleware.auth import verify_api_key
+from app.middleware.rate_limit import limiter
 from app.observability.logger import get_logger
 
 logger = get_logger(__name__)
+settings = get_settings()
 
 router = APIRouter(prefix="/api/eval", tags=["evaluation"])
 
@@ -90,7 +94,7 @@ EVAL_DATASET = [
 
 
 class EvalRetrievalRequest(BaseModel):
-    k: int = 5
+    k: int = Field(default=5, ge=1, le=20)
 
 
 class SingleEvalResult(BaseModel):
@@ -106,7 +110,7 @@ class RetrievalEvalResponse(BaseModel):
 
 
 class JudgeRequest(BaseModel):
-    question: str
+    question: str = Field(..., min_length=1, max_length=1000)
 
 
 class JudgeResponse(BaseModel):
@@ -123,9 +127,14 @@ class FullEvalResponse(BaseModel):
 
 
 @router.post("/retrieval", response_model=RetrievalEvalResponse)
-async def evaluate_retrieval_endpoint(request: EvalRetrievalRequest):
+@limiter.limit(settings.rate_limit_eval)
+async def evaluate_retrieval_endpoint(
+    request: Request,
+    body: EvalRetrievalRequest = EvalRetrievalRequest(),
+    _api_key: str | None = Depends(verify_api_key),
+):
     """Evaluate retrieval quality using precision, recall, and MRR."""
-    logger.info("retrieval_eval_start", k=request.k)
+    logger.info("retrieval_eval_start", k=body.k)
 
     results = []
     all_query_results = []
@@ -134,7 +143,7 @@ async def evaluate_retrieval_endpoint(request: EvalRetrievalRequest):
         query = item["query"]
         relevant_qs = set(item["relevant_questions"])
 
-        docs = search(query, top_k=request.k)
+        docs = search(query, top_k=body.k)
 
         retrieved_questions = [d["metadata"].get("question", "") for d in docs]
         retrieved_for_metrics = retrieved_questions
@@ -144,7 +153,7 @@ async def evaluate_retrieval_endpoint(request: EvalRetrievalRequest):
         metrics = evaluate_retrieval(
             retrieved_ids=retrieved_for_metrics,
             relevant_ids=relevant_for_metrics,
-            k=request.k,
+            k=body.k,
         )
 
         results.append(
@@ -159,15 +168,15 @@ async def evaluate_retrieval_endpoint(request: EvalRetrievalRequest):
         all_query_results.append((retrieved_for_metrics, relevant_for_metrics))
 
     mrr = mean_reciprocal_rank(all_query_results)
-    avg_precision = sum(r.metrics[f"precision@{request.k}"] for r in results) / len(
+    avg_precision = sum(r.metrics[f"precision@{body.k}"] for r in results) / len(
         results
     )
-    avg_recall = sum(r.metrics[f"recall@{request.k}"] for r in results) / len(results)
+    avg_recall = sum(r.metrics[f"recall@{body.k}"] for r in results) / len(results)
 
     aggregate = {
         "mrr": round(mrr, 4),
-        f"avg_precision@{request.k}": round(avg_precision, 4),
-        f"avg_recall@{request.k}": round(avg_recall, 4),
+        f"avg_precision@{body.k}": round(avg_precision, 4),
+        f"avg_recall@{body.k}": round(avg_recall, 4),
         "num_queries": len(results),
     }
 
@@ -176,24 +185,29 @@ async def evaluate_retrieval_endpoint(request: EvalRetrievalRequest):
 
 
 @router.post("/judge", response_model=JudgeResponse)
-async def judge_single(request: JudgeRequest):
+@limiter.limit(settings.rate_limit_eval)
+async def judge_single(
+    request: Request,
+    body: JudgeRequest,
+    _api_key: str | None = Depends(verify_api_key),
+):
     """Evaluate a single question using LLM-as-judge."""
-    logger.info("judge_single_start", question=request.question[:80])
+    logger.info("judge_single_start", question=body.question[:80])
 
-    rag_result = generate_answer(request.question)
+    rag_result = generate_answer(body.question)
 
     context = "\n\n".join(
         s.get("question", "") for s in rag_result.sources
     )
 
     evaluation = evaluate_response(
-        question=request.question,
+        question=body.question,
         context=rag_result.answer,
         answer=rag_result.answer,
     )
 
     return JudgeResponse(
-        question=request.question,
+        question=body.question,
         answer=rag_result.answer,
         evaluation=evaluation,
         sources=rag_result.sources,
@@ -201,11 +215,17 @@ async def judge_single(request: JudgeRequest):
 
 
 @router.post("/full", response_model=FullEvalResponse)
-async def full_evaluation():
+@limiter.limit(settings.rate_limit_eval)
+async def full_evaluation(
+    request: Request,
+    _api_key: str | None = Depends(verify_api_key),
+):
     """Run full evaluation: retrieval metrics + LLM-as-judge on all test queries."""
     logger.info("full_eval_start")
 
-    retrieval_result = await evaluate_retrieval_endpoint(EvalRetrievalRequest(k=5))
+    retrieval_result = await evaluate_retrieval_endpoint(
+        request, EvalRetrievalRequest(k=5)
+    )
 
     judge_results = []
     for item in EVAL_DATASET[:5]:

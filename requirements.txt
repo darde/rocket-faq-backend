@@ -10,3 +10,5 @@ sentence-transformers==5.2.3
 openai==2.24.0
 python-dotenv==1.2.1
 structlog==25.5.0
+slowapi==0.1.9
+cachetools==5.5.2

@@ -6,6 +6,7 @@ from pinecone import Pinecone, ServerlessSpec
 from app.config import get_settings
 from app.core.chunking import Chunk
 from app.core.embeddings import get_embeddings_provider
+from app.core.cache import get_cached_embedding, set_cached_embedding
 from app.observability.logger import get_logger
 
 logger = get_logger(__name__)
@@ -87,7 +88,11 @@ def search(query: str, top_k: int | None = None) -> list[dict]:
     embeddings = get_embeddings_provider()
     index = get_pinecone_index()
 
-    query_vector = embeddings.embed_query(query)
+    query_vector = get_cached_embedding(query)
+    if query_vector is None:
+        query_vector = embeddings.embed_query(query)
+        set_cached_embedding(query, query_vector)
+
     results = index.query(vector=query_vector, top_k=top_k, include_metadata=True)
 
     docs = []
