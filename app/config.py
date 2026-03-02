@@ -36,6 +36,16 @@ class Settings(BaseSettings):
     monthly_token_budget: int = 0
     max_response_tokens: int = 1024
 
+    # Guardrails
+    pii_detection_enabled: bool = True
+    injection_detection_enabled: bool = True
+    topic_detection_enabled: bool = True
+    confidence_threshold: float = 0.5
+
+    # Audit
+    audit_log_enabled: bool = True
+    audit_log_path: str = "data/audit_log.jsonl"
+
     class Config:
         env_file = ".env"
 

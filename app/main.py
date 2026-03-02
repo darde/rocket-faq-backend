@@ -5,6 +5,7 @@ from slowapi import _rate_limit_exceeded_handler
 
 from app.api.chat import router as chat_router
 from app.api.evaluation import router as eval_router
+from app.api.governance import router as governance_router
 from app.config import get_settings
 from app.core.cache import get_cache_stats
 from app.middleware.rate_limit import limiter
@@ -44,6 +45,7 @@ app.add_middleware(RequestIDMiddleware)
 
 app.include_router(chat_router)
 app.include_router(eval_router)
+app.include_router(governance_router)
 
 
 @app.get("/health")
