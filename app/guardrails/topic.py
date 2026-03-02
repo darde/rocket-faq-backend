@@ -16,6 +16,8 @@ MORTGAGE_KEYWORDS = {
     "balance", "billing", "home equity", "house", "real estate", "closing costs",
     "origination", "points", "rate lock", "conventional", "fha", "va loan",
     "usda", "jumbo", "conforming", "piti", "dti", "ltv",
+    "grace period", "late fee", "due date", "flood insurance",
+    "hazard insurance", "loan modification",
 }
 
 GREETING_PATTERNS = re.compile(
