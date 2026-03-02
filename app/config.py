@@ -46,6 +46,12 @@ class Settings(BaseSettings):
     audit_log_enabled: bool = True
     audit_log_path: str = "data/audit_log.jsonl"
 
+    # Agent system
+    agent_report_dir: str = "data/agent_reports"
+    agent_rate_limit: str = "2/minute"
+    agent_max_files_per_batch: int = 3
+    agent_max_tokens_per_request: int = 2048
+
     class Config:
         env_file = ".env"
 
