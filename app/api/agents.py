@@ -7,6 +7,7 @@ from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse
+from starlette.concurrency import run_in_threadpool
 
 from app.agents.coordinator import AgentCoordinator
 from app.config import get_settings
@@ -42,7 +43,7 @@ async def run_code_review(
     """Run the code review agent."""
     logger.info("agent_api_request", agent="code_reviewer")
     try:
-        return _run_agent("code_reviewer")
+        return await run_in_threadpool(_run_agent, "code_reviewer")
     except BudgetExceededError:
         raise HTTPException(status_code=503, detail="Token budget exceeded")
 
@@ -56,7 +57,7 @@ async def run_documenter(
     """Run the documenter agent."""
     logger.info("agent_api_request", agent="documenter")
     try:
-        return _run_agent("documenter")
+        return await run_in_threadpool(_run_agent, "documenter")
     except BudgetExceededError:
         raise HTTPException(status_code=503, detail="Token budget exceeded")
 
@@ -70,7 +71,7 @@ async def run_tech_debt(
     """Run the tech debt analyzer agent."""
     logger.info("agent_api_request", agent="tech_debt")
     try:
-        return _run_agent("tech_debt")
+        return await run_in_threadpool(_run_agent, "tech_debt")
     except BudgetExceededError:
         raise HTTPException(status_code=503, detail="Token budget exceeded")
 
@@ -84,7 +85,7 @@ async def run_full_analysis(
     """Run all agents via the coordinator."""
     logger.info("agent_api_request", agent="coordinator")
     try:
-        report = _coordinator.run_all()
+        report = await run_in_threadpool(_coordinator.run_all)
         _coordinator.save_report(report)
         return {
             "timestamp": report.timestamp,

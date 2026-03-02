@@ -1,0 +1,964 @@
+{
+  "agent_name": "code_reviewer",
+  "timestamp": "2026-03-02T18:34:41.063625+00:00",
+  "summary": "The codebase has several areas for improvement, ranging from security vulnerabilities like hardcoded API keys and insufficient input validation, to code quality issues such as complex logic, missing type hints, and inconsistent error handling. The analysis also identified opportunities to enhance best practices by addressing global variables, improving logging, and refactoring duplicated code.",
+  "findings": [
+    {
+      "category": "security",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/app/config.py",
+      "description": "The `api_key` is optional but if used, it should be validated in the application to prevent unauthorized access. Currently, there's no explicit validation mentioned.",
+      "suggestion": "Implement validation logic for the `api_key` in middleware or route handlers to ensure only authorized requests are processed.",
+      "line_range": ""
+    },
+    {
+      "category": "best_practices",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/config.py",
+      "description": "Consider using a more specific type for `embedding_provider` instead of `str`. This can improve code readability and prevent unexpected values.",
+      "suggestion": "Use an Enum for `embedding_provider` with values like `LOCAL` and `API`.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/config.py",
+      "description": "The `Config` class within `Settings` is a Pydantic convention. It's good practice, but consider adding a comment explaining its purpose for clarity.",
+      "suggestion": "Add a comment like `# Pydantic config` above the `Config` class.",
+      "line_range": ""
+    },
+    {
+      "category": "best_practices",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/main.py",
+      "description": "The `health` and `stats` endpoints are missing type hints for the return values.",
+      "suggestion": "Add type hints to the return values of the `health` and `stats` functions for better code clarity and maintainability. For example, `async def health() -> dict:`.",
+      "line_range": ""
+    },
+    {
+      "category": "security",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/app/main.py",
+      "description": "The `allowed_origins` are constructed by stripping trailing slashes. While this handles some cases, it might be more robust to use a dedicated URL parsing library to ensure correct origin validation, especially if more complex origin patterns are needed in the future.",
+      "suggestion": "Consider using `urllib.parse` to parse and validate the frontend URLs for more robust origin handling.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/main.py",
+      "description": "The comment \"Middleware (added in reverse order: last added runs first)\" is helpful, but consider adding a brief explanation of why the middleware order matters in this specific application.",
+      "suggestion": "Add a sentence or two explaining the importance of the middleware order, e.g., \"SecurityHeadersMiddleware should run before CORSMiddleware to ensure security headers are set before CORS policies are applied.\"",
+      "line_range": ""
+    },
+    {
+      "category": "best_practices",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/middleware/__init__.py",
+      "description": "Empty __init__.py file. If this file is not needed, it should be removed.",
+      "suggestion": "Remove the file if it serves no purpose. Otherwise, add module-level documentation or exports.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/middleware/auth.py",
+      "description": "The return type hint for `verify_api_key` is `str | None`, but it only returns `None` when the API key is not configured. When the API key is configured, it returns the API key if it's valid, otherwise it raises an HTTPException.  The return type should likely just be `str` since `None` is only returned in a specific case.",
+      "suggestion": "Change the return type hint of `verify_api_key` to `str` and update the docstring to reflect the behavior.",
+      "line_range": ""
+    },
+    {
+      "category": "security",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/app/middleware/security.py",
+      "description": "The `Strict-Transport-Security` header is set with `includeSubDomains`. This is generally good practice, but it's important to ensure that all subdomains are indeed served over HTTPS. Misconfigured subdomains could lead to security vulnerabilities.",
+      "suggestion": "Verify that all subdomains are served over HTTPS before deploying with `includeSubDomains` enabled. Consider adding `preload` as well.",
+      "line_range": ""
+    },
+    {
+      "category": "security",
+      "severity": "critical",
+      "file_path": "rocket-faq-backend/app/core/vectorstore.py",
+      "description": "The Pinecone API key is being read directly from the settings, which could lead to exposure if the settings are not properly secured (e.g., stored in plaintext in a configuration file or environment variable without proper access controls).",
+      "suggestion": "Use a more secure method for storing and accessing the Pinecone API key, such as a secrets management service (e.g., HashiCorp Vault, AWS Secrets Manager) or environment variables with restricted access. Ensure that the environment where the application runs is properly secured to prevent unauthorized access to the API key.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/app/core/vectorstore.py",
+      "description": "The `get_pinecone_index` function uses a global variable `_pinecone_index` to cache the Pinecone index. This can make testing and reasoning about the code more difficult. It also isn't thread-safe.",
+      "suggestion": "Consider using a dependency injection framework or a more explicit caching mechanism (e.g., a dictionary within a class) to manage the Pinecone index instance.  If concurrency is a concern, use a thread-safe mechanism like a `threading.Lock` when accessing the global variable.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/app/core/vectorstore.py",
+      "description": "The `ensure_index_exists` function uses a `time.sleep(1)` in a loop to wait for the index to be ready. This is a blocking operation and can be inefficient.",
+      "suggestion": "Consider using an asynchronous approach with `asyncio.sleep` or a more sophisticated polling mechanism with exponential backoff to avoid blocking the main thread and improve efficiency.  Also, add a timeout to prevent indefinite waiting.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "medium",
+      "file_path": "rocket-faq-backend/app/core/vectorstore.py",
+      "description": "The `upsert_chunks` function iterates through the records and upserts them in batches.  If the Pinecone service is unavailable or encounters an error, the function does not handle the exception, potentially leading to data loss or incomplete upserts.",
+      "suggestion": "Implement error handling within the `upsert_chunks` function to catch potential exceptions during the upsert operation. Consider adding retry logic with exponential backoff to handle transient errors. Log any errors that occur to facilitate debugging.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/app/core/vectorstore.py",
+      "description": "The `search` function truncates the query string to 80 characters for logging purposes. While this prevents excessively long log messages, it might truncate important information for debugging.",
+      "suggestion": "Consider using a hash of the query string instead of truncating it, or provide a configuration option to control the maximum length of the logged query.  Alternatively, log the full query string at a debug level and the truncated version at the info level.",
+      "line_range": ""
+    },
+    {
+      "category": "best_practices",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/middleware/rate_limit.py",
+      "description": "The rate limiter uses an in-memory storage (`memory://`). This is not suitable for production environments with multiple instances of the application, as the rate limits will not be shared across instances.",
+      "suggestion": "Use a shared storage backend for the rate limiter, such as Redis or Memcached, to ensure that rate limits are enforced consistently across all instances of the application.  Update the `storage_uri` in the `Limiter` constructor accordingly.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "medium",
+      "file_path": "rocket-faq-backend/app/core/chunking.py",
+      "description": "The `chunk_faq_document` function contains complex logic for parsing the FAQ markdown. The nested `while` loop and conditional statements make the code difficult to read and maintain.",
+      "suggestion": "Refactor the `chunk_faq_document` function to improve readability and maintainability. Consider using a state machine or a more structured approach to parse the markdown. Break down the function into smaller, more manageable sub-functions. Add more comments to explain the logic.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/app/core/chunking.py",
+      "description": "The `chunk_faq_document` function uses regular expressions to clean up the question text. This is a good start, but it may not be robust enough to handle all possible variations in the FAQ markdown.",
+      "suggestion": "Consider using a more robust markdown parser library to handle the FAQ markdown. This will provide more reliable and consistent parsing results.  Also, add more tests to ensure that the chunking logic handles different markdown variations correctly.",
+      "line_range": ""
+    },
+    {
+      "category": "best_practices",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/core/cache.py",
+      "description": "Missing type hints for function arguments and return values in some functions.",
+      "suggestion": "Add type hints to all function arguments and return values for better readability and maintainability. For example, `def get_cached_rag_response(question: str) -> str | None:`",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/core/cache.py",
+      "description": "String slicing `question[:80]` in log messages might truncate important information.",
+      "suggestion": "Consider logging a hash of the question instead of truncating it, or provide a configuration option to control the length of the logged question.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/core/cache.py",
+      "description": "The `_normalize_question` function could be more robust by handling potential Unicode issues.",
+      "suggestion": "Consider explicitly encoding the string to UTF-8 before normalization to handle Unicode characters correctly.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/core/llm.py",
+      "description": "The global variable `_client` is used to store the OpenAI client. This can make testing and reasoning about the code more difficult.",
+      "suggestion": "Consider using dependency injection to pass the OpenAI client to the functions that need it. This will make the code more testable and easier to reason about.",
+      "line_range": ""
+    },
+    {
+      "category": "best_practices",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/core/llm.py",
+      "description": "Missing type hints for function arguments and return values in some functions.",
+      "suggestion": "Add type hints to all function arguments and return values for better readability and maintainability. For example, `def chat_completion(messages: list[dict], model: str | None = None, temperature: float = 0.3, max_tokens: int | None = None) -> str:`",
+      "line_range": ""
+    },
+    {
+      "category": "improvement",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/app/core/llm.py",
+      "description": "The `chat_completion` function retrieves settings every time it's called. This could be optimized.",
+      "suggestion": "Retrieve the settings once outside the function and pass relevant settings as arguments to the `chat_completion` function.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/app/core/llm.py",
+      "description": "The `usage_info` dictionary is accessed using string keys. It would be more robust to define a dataclass or TypedDict for `usage_info`.",
+      "suggestion": "Define a dataclass or TypedDict for `usage_info` to provide better type safety and readability.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/core/embeddings.py",
+      "description": "Missing type hints for the `_model` attribute in `LocalEmbeddings` and `_client` and `_model_id` in `APIEmbeddings`. This makes it harder to understand the code and can lead to errors.",
+      "suggestion": "Add type hints to the `_model`, `_client` and `_model_id` attributes in `LocalEmbeddings` and `APIEmbeddings` respectively. For example: `self._model: HuggingFaceEmbeddings`.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/core/embeddings.py",
+      "description": "The `_normalize` method in `APIEmbeddings` can be simplified by using the walrus operator to avoid redundant calculations.",
+      "suggestion": "Refactor the `_normalize` method to use the walrus operator: `if (norm := math.sqrt(sum(x * x for x in vec))) > 0: return [x / norm for x in vec] else: return vec`",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/core/rag.py",
+      "description": "The `AuditEntry` dataclass fields `question_had_pii`, `injection_detected`, `off_topic`, `answer_had_pii`, `low_confidence`, and `blocked` are boolean values, but the corresponding fields in `guardrails_meta` are not consistently booleans (e.g., `injection_risk_level` is a string). This inconsistency can lead to confusion and potential errors.",
+      "suggestion": "Ensure that the types of the fields in `guardrails_meta` match the types of the corresponding fields in `AuditEntry`. Specifically, ensure that `guardrails_meta` always contains boolean values for fields that are booleans in `AuditEntry`.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/core/rag.py",
+      "description": "The code truncates the query to 100 characters for logging purposes (`query[:100]`). While this prevents excessively long log messages, it might obscure important information for debugging. Consider logging a hash of the full query or logging the full query only in debug mode.",
+      "suggestion": "Implement a more robust logging strategy for queries, such as logging a hash of the full query or logging the full query only in debug mode. This will provide more useful information for debugging without generating excessively long log messages.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/core/rag.py",
+      "description": "The code repeats the same logic for returning a blocked response in multiple `if` blocks (injection and topic detection). This can be refactored into a separate function to reduce code duplication.",
+      "suggestion": "Create a function to handle the blocked response logic. This function should take the `guardrails_meta`, `query`, `pii_redacted_query`, and `blocked_reason` as input, and return a `RAGResponse` object. This will reduce code duplication and make the code more maintainable.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/core/rag.py",
+      "description": "The code uses string formatting with `.format()` which is less readable and potentially less performant than f-strings. Consider using f-strings for better readability and performance.",
+      "suggestion": "Replace `.format()` with f-strings in the `CONTEXT_TEMPLATE` definition. For example: `f\"Here is relevant information... {context} ... User question: {question}\"`",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/core/rag.py",
+      "description": "The code accesses dictionary values using `.get()` with a default value of `''` or `0`. While this prevents `KeyError` exceptions, it might mask underlying issues if these keys are expected to be present. Consider logging a warning if a key is missing.",
+      "suggestion": "Add a warning log message if a key is missing when accessing dictionary values using `.get()`. This will help identify potential issues with the data being retrieved from the vector store.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/guardrails/injection.py",
+      "description": "The `explanation` field in `InjectionScanResult` is not used in the `rag.py` file. Consider removing it to simplify the code.",
+      "suggestion": "Remove the `explanation` field from the `InjectionScanResult` dataclass.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/guardrails/injection.py",
+      "description": "The risk level is determined by the number of matched patterns. This is a simplistic approach and might not accurately reflect the actual risk. Consider using a more sophisticated approach, such as assigning different weights to different patterns.",
+      "suggestion": "Implement a more sophisticated approach for determining the risk level of prompt injection attacks. This could involve assigning different weights to different patterns based on their severity.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/guardrails/topic.py",
+      "description": "Consider using a more descriptive variable name than `kw` in the list comprehension that builds the keyword pattern.",
+      "suggestion": "Rename `kw` to `keyword` for better readability.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/guardrails/output.py",
+      "description": "Consider using a more descriptive variable name than `kw` in the list comprehension that builds the disclaimer patterns.",
+      "suggestion": "Rename `kw` to `keyword` for better readability.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/guardrails/output.py",
+      "description": "The loop `for category in [\"financial_advice\", \"legal\", \"tax\"]:` iterates over hardcoded strings. This is coupled with the `DISCLAIMER_PATTERNS` and `DISCLAIMERS` dictionaries. If a new category is added to those dictionaries, this loop needs to be updated as well.",
+      "suggestion": "Iterate over the keys of `DISCLAIMER_PATTERNS` or `DISCLAIMERS` instead, e.g., `for category in DISCLAIMER_PATTERNS:`.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/guardrails/output.py",
+      "description": "The variable `modified` is assigned to `answer` and then potentially modified. Consider using a more descriptive name for the variable that accumulates the modifications, such as `guarded_answer`.",
+      "suggestion": "Rename `modified` to `guarded_answer`.",
+      "line_range": ""
+    },
+    {
+      "category": "best_practices",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/guardrails/output.py",
+      "description": "The type hint for `source_scores` is `list[float]`, but it's not clear if this list can be empty. If it can be empty, consider adding a check for emptiness before accessing it, or using `typing.Sequence[float]` to allow for other sequence types.",
+      "suggestion": "Consider adding a check for emptiness of `source_scores` or using `typing.Sequence[float]`.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/guardrails/output.py",
+      "description": "The `process_output` function modifies the input `answer` by prepending `LOW_CONFIDENCE_WARNING`. This could be unexpected behavior for the caller. Consider returning a separate flag indicating low confidence instead of modifying the answer directly, or making it more explicit in the function name.",
+      "suggestion": "Consider returning a separate flag indicating low confidence instead of modifying the answer directly, or rename the function to `process_output_and_prepend_low_confidence_warning`.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/guardrails/topic.py",
+      "description": "The `scan_topic` function returns a `TopicScanResult` with `has_mortgage_keywords=False` when a greeting is detected. This might be misleading, as the question could still contain mortgage keywords. Consider returning `has_mortgage_keywords=None` in this case to indicate that the presence of keywords was not checked.",
+      "suggestion": "Return `has_mortgage_keywords=None` when a greeting is detected to indicate that the presence of keywords was not checked.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/guardrails/pii.py",
+      "description": "Consider adding docstrings to the `PIIMatch` and `PIIScanResult` dataclasses to explain their purpose and attributes.",
+      "suggestion": "Add docstrings to the dataclasses.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/app/guardrails/pii.py",
+      "description": "The `scan_pii` function could be refactored to improve readability. Consider creating separate functions for each PII type to improve modularity and testability.",
+      "suggestion": "Refactor `scan_pii` into smaller functions, one for each PII type.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/app/guardrails/pii.py",
+      "description": "The regular expressions for PII detection might not be comprehensive and could miss certain variations.  Consider expanding the regex patterns to cover more edge cases.",
+      "suggestion": "Review and expand the regex patterns to cover more variations of PII data.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/guardrails/pii.py",
+      "description": "The `_normalize_phone` function could be improved by using a more robust phone number parsing library to handle different phone number formats and country codes.",
+      "suggestion": "Use a phone number parsing library like `phonenumbers` for better phone number normalization.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/app/guardrails/pii.py",
+      "description": "The deduplication logic in `scan_pii` could be simplified by using a dictionary to store the matches, keyed by their start and end positions.",
+      "suggestion": "Use a dictionary for deduplication in `scan_pii`.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/app/agents/tech_debt.py",
+      "description": "The `_HARDCODED_PATTERN` is very broad and may lead to false positives. It should be refined to be more specific.",
+      "suggestion": "Refine the `_HARDCODED_PATTERN` regex to reduce false positives.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/app/agents/tech_debt.py",
+      "description": "The static analysis in `_static_analysis` could be extended to include more checks, such as identifying unused variables or imports.",
+      "suggestion": "Add more static analysis checks to `_static_analysis`.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/agents/tech_debt.py",
+      "description": "Consider adding type hints to the `_static_analysis` method for better readability and maintainability.",
+      "suggestion": "Add type hints to the `_static_analysis` method.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/agents/coordinator.py",
+      "description": "Consider adding docstrings to the `AgentCoordinator` class and its methods to explain their purpose and functionality.",
+      "suggestion": "Add docstrings to the `AgentCoordinator` class and its methods.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/app/agents/coordinator.py",
+      "description": "The `run_all` method catches all exceptions, which might hide important errors. Consider catching specific exceptions and re-raising others.",
+      "suggestion": "Catch specific exceptions in `run_all` and re-raise others.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/agents/coordinator.py",
+      "description": "The `save_report` method saves agent reports individually, but the markdown documentation is saved with a generic name. Consider including the agent name in the markdown filename.",
+      "suggestion": "Include the agent name in the markdown documentation filename in `save_report`.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/agents/models.py",
+      "description": "The `line_range` field in the `Finding` dataclass is initialized with an empty string. Consider using `Optional[str]` and initializing with `None` to better represent the absence of a value.",
+      "suggestion": "Change `line_range: str = \"\"` to `line_range: Optional[str] = None` and import `Optional` from the `typing` module.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/agents/models.py",
+      "description": "The `timestamp` field in `AgentReport` and `CoordinatorReport` uses a lambda to generate the default value. This can be simplified by directly assigning the function `datetime.now(timezone.utc).isoformat` to the `default` argument of the `field` function.",
+      "suggestion": "Change `timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())` to `timestamp: str = field(default=datetime.now(timezone.utc).isoformat())` in both `AgentReport` and `CoordinatorReport`.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/agents/models.py",
+      "description": "The `to_dict` method in `AgentReport` converts the `severity` enum to its string value. This conversion should ideally happen within the `Finding` class itself, or a dedicated serializer, to keep the `AgentReport` class cleaner and more focused on its own data.",
+      "suggestion": "Consider adding a `to_dict` method to the `Finding` class that includes the `severity.value` conversion. Then, the `AgentReport.to_dict` method can simply call `f.to_dict()` for each finding.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/agents/code_reviewer.py",
+      "description": "The agent's system prompt is defined as a string literal within the class.  For better maintainability and readability, consider moving this prompt to a separate file or a constant variable.",
+      "suggestion": "Move the system prompt to a separate file (e.g., `code_reviewer_prompt.txt`) or a constant variable defined outside the class. This improves readability and makes it easier to update the prompt without modifying the class definition.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/app/agents/code_reviewer.py",
+      "description": "The `_parse_findings` method uses `item.get` with default values for all fields. While this prevents `KeyError` exceptions, it might mask actual errors if the JSON structure is unexpected. Consider adding validation to ensure the expected keys are present.",
+      "suggestion": "Add validation to check for the presence of required keys ('category', 'severity', 'file_path', 'description', 'suggestion') in each item of `raw_findings`. Raise a `ValueError` or log an error if any of these keys are missing.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/agents/code_reviewer.py",
+      "description": "The `_parse_findings` method uses a hardcoded severity map. If the possible severity values change, this map needs to be updated manually. Consider deriving the severity map directly from the `Severity` enum.",
+      "suggestion": "Replace `severity_map = {s.value: s for s in Severity}` with `severity_map = Severity.__members__`. This dynamically creates the map from the enum members.",
+      "line_range": ""
+    },
+    {
+      "category": "best_practices",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/agents/__init__.py",
+      "description": "The `__init__.py` file is empty. If it's not intended to be used, it should be removed. Otherwise, add relevant imports or module-level code.",
+      "suggestion": "Either remove the `__init__.py` file or add relevant imports/code to it.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/agents/documenter.py",
+      "description": "The `_parse_findings` method attempts to parse the raw LLM output as JSON. It first tries to find a JSON object using regex, and if that fails, it tries to parse the entire raw string. This can lead to errors if the LLM returns text before or after the JSON object.",
+      "suggestion": "Improve the JSON parsing logic in `_parse_findings` to be more robust. Consider using a more sophisticated JSON parsing library or implementing more specific error handling to handle cases where the LLM output is not a valid JSON object.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/agents/documenter.py",
+      "description": "The `_parse_findings` method catches `KeyError` during JSON parsing but doesn't provide specific handling for missing keys. This could make debugging more difficult.",
+      "suggestion": "Log the specific missing key in the `KeyError` exception handler to provide more context for debugging.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/agents/documenter.py",
+      "description": "In the `analyze` method, the code truncates the finding description to 300 characters if JSON parsing fails. This can lead to incomplete or misleading information in the report.",
+      "suggestion": "Consider logging the full description or providing a more informative message when JSON parsing fails, rather than truncating the description.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/agents/documenter.py",
+      "description": "The `_generate_summary` method provides hardcoded recommendations. These recommendations might not be relevant to every project.",
+      "suggestion": "Consider making the recommendations dynamic, perhaps by having the LLM generate recommendations based on the findings.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/agents/base.py",
+      "description": "The `_parse_json_findings` method attempts to extract a JSON array of findings from LLM output using regex. It tries to find a JSON array and, if that fails, tries to find a JSON object with a 'findings' key. This approach is fragile and can lead to errors if the LLM output is not in the expected format.",
+      "suggestion": "Improve the JSON parsing logic in `_parse_json_findings` to be more robust. Consider using a more sophisticated JSON parsing library or implementing more specific error handling to handle cases where the LLM output is not a valid JSON array or object.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/agents/base.py",
+      "description": "The `_generate_summary` method in `BaseAgent` uses regex to extract the JSON response from the LLM. This is fragile and prone to errors if the LLM's response format changes slightly.",
+      "suggestion": "Use a more robust method for parsing the LLM's JSON response, such as a dedicated JSON parsing library with error handling. Consider adding retry logic in case the LLM returns an invalid JSON response.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/agents/base.py",
+      "description": "The `_read_project_files` method reads all files matching the given patterns into memory. For very large projects, this could lead to memory issues.",
+      "suggestion": "Consider using a streaming approach to read files in chunks, especially for very large projects.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/observability/cost_tracker.py",
+      "description": "The `MODEL_PRICING` dictionary contains hardcoded pricing information. This information may become outdated or inaccurate.",
+      "suggestion": "Consider fetching pricing information from an external source or making it configurable through environment variables.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/observability/cost_tracker.py",
+      "description": "The `UsageTracker` stores usage data in memory. This data will be lost when the application restarts.",
+      "suggestion": "Consider persisting usage data to a database or other persistent storage to avoid data loss.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/observability/cost_tracker.py",
+      "description": "The `UsageTracker` cleans up old daily entries by keeping only the last 7 days. However, it only performs this cleanup when a new entry is added. This means that if no new entries are added for more than 7 days, the old entries will not be cleaned up.",
+      "suggestion": "Consider implementing a background task or scheduled job to periodically clean up old daily entries, regardless of whether new entries are being added.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/app/observability/audit.py",
+      "description": "The `update_audit_feedback` function reads and writes the entire audit log file for a single update. This can become inefficient and slow with large log files.",
+      "suggestion": "Consider using a database or a more efficient file format (e.g., SQLite, Parquet) for the audit log to allow for more efficient updates. Alternatively, if using JSONL is a must, explore using a library that allows for in-place updates of JSONL files, or consider appending updates to a separate file and merging them periodically.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/app/observability/audit.py",
+      "description": "The `get_governance_summary` function reads the entire audit log file to calculate statistics. This can become inefficient and slow with large log files.",
+      "suggestion": "Consider using a database or a more efficient file format (e.g., SQLite, Parquet) for the audit log to allow for more efficient aggregations. Alternatively, pre-calculate and store governance summary statistics periodically to avoid reading the entire file on each request.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/observability/audit.py",
+      "description": "The `AuditEntry` dataclass uses `str` for the `timestamp` field. It would be better to use `datetime` objects directly.",
+      "suggestion": "Change the type of the `timestamp` field in the `AuditEntry` dataclass to `datetime`.  Adjust the `write_audit_entry` and `update_audit_feedback` functions to handle `datetime` objects appropriately, formatting them for storage and parsing them when reading from the log.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/app/observability/audit.py",
+      "description": "The code uses `path.read_text().strip().split(\"\\n\")` to read the audit log file. This approach can be inefficient for very large files as it loads the entire file into memory.",
+      "suggestion": "Use a line-by-line reading approach with `with open(path, 'r') as f: for line in f:` to process the file in chunks and reduce memory consumption.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/app/observability/audit.py",
+      "description": "The code uses `json.loads` without proper error handling within the `update_audit_feedback` and `get_governance_summary` functions. If a line in the audit log is malformed JSON, it will crash.",
+      "suggestion": "Add a `try...except` block around the `json.loads` call to catch `json.JSONDecodeError` and log the error.  Consider skipping the malformed line or logging a warning and continuing.",
+      "line_range": ""
+    },
+    {
+      "category": "best_practices",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/observability/audit.py",
+      "description": "Missing type hints for function parameters and return values in some functions.",
+      "suggestion": "Add type hints to all function parameters and return values for better code readability and maintainability. For example, add type hints to the parameters and return value of `_get_log_path`.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/observability/audit.py",
+      "description": "In `get_governance_summary`, the code iterates through `entry.get(\"disclaimers_added\", [])` and checks `if disclaimer in summary[\"disclaimers_count\"]`. This assumes that all possible disclaimer values are already keys in the `disclaimers_count` dictionary. If a new disclaimer is added, it will be missed.",
+      "suggestion": "Use `summary[\"disclaimers_count\"].get(disclaimer, 0) + 1` to handle cases where the disclaimer is not yet in the dictionary.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/api/evaluation.py",
+      "description": "The variable name `relevant_qs` is slightly ambiguous. Consider renaming it to `relevant_questions_set` for better clarity.",
+      "suggestion": "Rename the variable `relevant_qs` to `relevant_questions_set`.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "medium",
+      "file_path": "rocket-faq-backend/app/api/evaluation.py",
+      "description": "The `full_evaluation` endpoint only evaluates the first 5 items in `EVAL_DATASET` for the judge evaluation. This is inconsistent with the retrieval evaluation, which evaluates all items. This could lead to incomplete or biased results.",
+      "suggestion": "Modify the `full_evaluation` endpoint to evaluate all items in `EVAL_DATASET` for the judge evaluation, or make the number of items configurable.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/app/api/evaluation.py",
+      "description": "In the `full_evaluation` endpoint, the `answer` field in the `judge_results` list is truncated to 300 characters. This truncation might remove important information and affect the usefulness of the evaluation results.",
+      "suggestion": "Consider removing the truncation of the `answer` field or making the truncation length configurable.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "medium",
+      "file_path": "rocket-faq-backend/app/api/evaluation.py",
+      "description": "In the `full_evaluation` endpoint, the code checks if `j[\"evaluation\"].get(\"overall_score\")` is an instance of `(int, float)` before calculating the average judge score. However, it doesn't handle the case where `j[\"evaluation\"]` or `j[\"evaluation\"][\"overall_score\"]` might be `None`. This could lead to a `TypeError` if `sum` is called with `None` values.",
+      "suggestion": "Add a check to ensure that `j[\"evaluation\"]` and `j[\"evaluation\"][\"overall_score\"]` are not `None` before including the score in the `scored` list.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/app/api/agents.py",
+      "description": "The function `_run_agent` retrieves the agent instance using a generator expression and `next`. If no agent with the given name is found, `next` will raise a `StopIteration` exception, which is not handled. This will cause the API to crash.",
+      "suggestion": "Add error handling to the `_run_agent` function to catch the `StopIteration` exception and return an appropriate error message.",
+      "line_range": ""
+    },
+    {
+      "category": "security",
+      "severity": "medium",
+      "file_path": "rocket-faq-backend/app/api/agents.py",
+      "description": "The `get_report` endpoint performs a check for `..` and `/` in the filename to prevent path traversal. However, this check is insufficient.  A more robust solution would be to use `os.path.abspath` and `os.path.commonpath` to ensure the requested file is within the allowed report directory.",
+      "suggestion": "Use `os.path.abspath` and `os.path.commonpath` to validate that the requested file is within the allowed report directory.",
+      "line_range": ""
+    },
+    {
+      "category": "best_practices",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/api/agents.py",
+      "description": "The docstrings for the agent endpoints are good, but could be improved by including information about the expected request body and the structure of the response.",
+      "suggestion": "Add information about the request body and response structure to the docstrings of the agent endpoints.",
+      "line_range": ""
+    },
+    {
+      "category": "improvement",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/app/api/agents.py",
+      "description": "The `list_reports` endpoint returns the filename and size of each report. It could be improved by also including the timestamp of the report, which can be extracted from the filename.",
+      "suggestion": "Modify the `list_reports` endpoint to extract the timestamp from the filename and include it in the response.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/api/chat.py",
+      "description": "The `sanitize_question` method uses a regular expression to remove control characters. While this is good, consider adding logging to track when characters are removed, as this could indicate malicious input or unexpected data.",
+      "suggestion": "Add logging within the `sanitize_question` method to track when characters are removed. This can help in identifying potential security issues or data quality problems.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/api/chat.py",
+      "description": "The `chat` endpoint logs the first 100 characters of the question. This is helpful, but consider logging the length of the question as well, to detect unusually long questions that might be indicative of an attack.",
+      "suggestion": "Include the length of the question in the log message within the `chat` endpoint.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "medium",
+      "file_path": "rocket-faq-backend/app/api/chat.py",
+      "description": "The `chat` endpoint catches all exceptions and returns a 500 error with the exception message.  This can expose internal details and should be avoided.  It's better to return a generic error message.",
+      "suggestion": "Instead of returning the raw exception message, return a generic error message like \"An unexpected error occurred.\" and log the full exception details for debugging purposes.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/api/chat.py",
+      "description": "The code filters the `result.guardrails` dictionary to only include keys present in `GuardrailsInfo.model_fields`. While this prevents unexpected data from being passed to the `GuardrailsInfo` model, it might be better to ensure that the `result.guardrails` dictionary always contains the expected keys to avoid potential data loss or unexpected behavior.",
+      "suggestion": "Investigate the source of `result.guardrails` to ensure it always contains the expected keys. If necessary, update the code that generates `result.guardrails` to include all required fields.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/api/chat.py",
+      "description": "The `FeedbackRequest` model uses a regular expression to validate the `rating` field. This is good, but consider using an Enum for the rating values to improve code readability and maintainability.",
+      "suggestion": "Replace the regular expression validation for the `rating` field in the `FeedbackRequest` model with an Enum.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/api/governance.py",
+      "description": "The `governance_summary` endpoint simply returns the result of `get_governance_summary()`. Consider adding error handling and logging to this endpoint to improve its robustness and observability.",
+      "suggestion": "Add error handling and logging to the `governance_summary` endpoint.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "medium",
+      "file_path": "app/evaluation/judge.py",
+      "description": "The code uses regular expressions to extract JSON from the LLM response. This is brittle and can fail if the LLM response format changes slightly. It also attempts to parse the entire raw response if the regex fails, which might lead to unexpected behavior if the LLM returns non-JSON content.",
+      "suggestion": "Instead of relying on regex, instruct the LLM to ONLY return valid JSON.  If parsing fails, consider retrying the LLM call with more specific instructions.  Also, consider using a more robust parsing library or method if the LLM is known to sometimes include surrounding text.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "app/evaluation/judge.py",
+      "description": "The `evaluate_response` function catches `json.JSONDecodeError` but the error handling could be improved.  It assigns a score of 0 and a generic error message to all evaluation dimensions.  This provides limited information for debugging.",
+      "suggestion": "Include the raw LLM response (or a truncated version) in the error message to aid debugging. Consider logging the exception itself for more detailed information.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "app/evaluation/judge.py",
+      "description": "The `evaluate_response` function truncates the raw response to 200 characters for logging in case of a parse error and to 500 characters when including it in the result. This truncation might remove important information for debugging.",
+      "suggestion": "Consider using a more sophisticated truncation strategy that preserves the beginning and end of the string, or logging the entire response to a separate file or service.",
+      "line_range": ""
+    },
+    {
+      "category": "best_practices",
+      "severity": "info",
+      "file_path": "app/evaluation/judge.py",
+      "description": "The `overall_score` is calculated as the average of other scores, but the code doesn't explicitly show how this calculation is performed within the function. It relies on the LLM to perform the calculation.",
+      "suggestion": "Consider calculating the `overall_score` within the `evaluate_response` function itself after parsing the individual scores. This provides more control and ensures consistency in the calculation.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "scripts/ingest.py",
+      "description": "The script adds the project root to `sys.path`. While this works, it's generally better to use a more robust approach for managing dependencies and imports, such as using a virtual environment and installing the project as a package.",
+      "suggestion": "Use a virtual environment (e.g., `venv`) and install the project as a package using `pip install -e .` (from the project root). This will allow you to import modules directly without modifying `sys.path`.",
+      "line_range": ""
+    },
+    {
+      "category": "best_practices",
+      "severity": "info",
+      "file_path": "rocket-faq-frontend/src/api/client.ts",
+      "description": "Missing type definitions for return values of API calls.  This makes it harder to reason about the code and can lead to runtime errors.",
+      "suggestion": "Add explicit type definitions for the return values of all API functions, e.g., `export async function sendMessage(question: string): Promise<ChatResponse> { ... }`",
+      "line_range": ""
+    },
+    {
+      "category": "security",
+      "severity": "low",
+      "file_path": "rocket-faq-frontend/src/api/client.ts",
+      "description": "API key is being read directly from environment variables in the frontend. While not hardcoded, this is still exposed in the browser and could be extracted.  It's better to proxy API requests through the backend to manage the API key securely.",
+      "suggestion": "Move API key handling to the backend.  The frontend should send requests to backend endpoints, which then forward the requests to the external API with the API key included in the headers.  This prevents exposing the API key to the client.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-frontend/src/api/client.ts",
+      "description": "Inconsistent error handling. Some functions throw generic `Error` objects with HTTP status codes, while others parse the JSON response for a `detail` field.  This makes error handling in the components more complex.",
+      "suggestion": "Standardize error handling.  Create a custom error class (e.g., `APIError`) that encapsulates the status code and error message.  Always throw instances of this class, ensuring consistent error structure across all API calls.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-frontend/src/api/client.ts",
+      "description": "The `normalizeApiBase` function could be simplified. The logic can be condensed into a single return statement.",
+      "suggestion": "Simplify `normalizeApiBase` to: `return rawBase.trim().replace(//+$/, '') || '/api';`",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "rocket-faq-backend/scripts/run_agents.py",
+      "description": "The agent report saving logic is duplicated. The `run_all` function calls `coordinator.save_report`, while the `run_single` function calls `agent_instance._save_report`. This should be consolidated into a single method within the `AgentCoordinator`.",
+      "suggestion": "Move the `_save_report` method from the agent instances to the `AgentCoordinator` class and call it consistently from both `run_all` and `run_single`.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/scripts/run_agents.py",
+      "description": "Missing type hints. Adding type hints improves code readability and maintainability.",
+      "suggestion": "Add type hints to function arguments and return values in `run_agents.py`.",
+      "line_range": ""
+    },
+    {
+      "category": "best_practices",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/scripts/run_agents.py",
+      "description": "Consider using `logging.info` instead of `print` for outputting information. This allows for better control over logging levels and destinations.",
+      "suggestion": "Replace `print` statements with `logger.info` calls in `run_agents.py`.",
+      "line_range": ""
+    },
+    {
+      "category": "best_practices",
+      "severity": "info",
+      "file_path": "rocket-faq-frontend/src/components/ChatWindow.tsx",
+      "description": "Missing type annotation for the `text` parameter in the `handleSend` function. Although it has a default value, explicitly typing it improves readability and maintainability.",
+      "suggestion": "Add a type annotation to the `text` parameter: `const handleSend = async (text?: string) => {`",
+      "line_range": ""
+    },
+    {
+      "category": "best_practices",
+      "severity": "info",
+      "file_path": "rocket-faq-frontend/src/components/ChatWindow.tsx",
+      "description": "The `err` variable in the `catch` block of `handleSend` is only used to access `err.message`.  Consider narrowing the type to `Error` directly in the catch block to avoid the `instanceof` check.",
+      "suggestion": "Change the catch block to `catch (err: Error) { ... err.message ... }`",
+      "line_range": ""
+    },
+    {
+      "category": "best_practices",
+      "severity": "info",
+      "file_path": "rocket-faq-frontend/src/components/EvalPanel.tsx",
+      "description": "The type of `e.target.value` is not guaranteed to be `'retrieval' | 'full'` in the `onChange` handler of the select element.  This is why a type assertion `as any` is needed.  This can be improved by explicitly typing the event.",
+      "suggestion": "Change the `onChange` handler to `<select onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setEvalType(e.target.value as 'retrieval' | 'full')}`",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "rocket-faq-frontend/src/components/EvalPanel.tsx",
+      "description": "The `AggregateMetrics` component receives `data: Record<string, any>`.  This is too broad.  It should be typed more specifically based on the expected structure of the data.",
+      "suggestion": "Define a specific type or interface for the `data` prop of `AggregateMetrics` based on the expected keys and value types.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "rocket-faq-frontend/src/components/EvalPanel.tsx",
+      "description": "The `DetailedResults` component receives `data: any[]`.  This is too broad.  It should be typed more specifically based on the expected structure of the data.",
+      "suggestion": "Define a specific type or interface for the `data` prop of `DetailedResults` based on the expected structure of the data.",
+      "line_range": ""
+    },
+    {
+      "category": "quality",
+      "severity": "low",
+      "file_path": "rocket-faq-frontend/src/components/EvalPanel.tsx",
+      "description": "The `JudgeResults` component receives `data: any[]`.  This is too broad.  It should be typed more specifically based on the expected structure of the data.",
+      "suggestion": "Define a specific type or interface for the `data` prop of `JudgeResults` based on the expected structure of the data.",
+      "line_range": ""
+    },
+    {
+      "category": "improvement",
+      "severity": "info",
+      "file_path": "rocket-faq-frontend/src/components/DashboardPanel.tsx",
+      "description": "The `fetchAll` function fetches data from multiple endpoints concurrently using `Promise.all`. While this is good, consider adding error handling for individual promises within `Promise.all` to prevent one failing request from breaking the entire dashboard.",
+      "suggestion": "Implement error handling for each promise within `Promise.all` using `.catch()` to ensure that even if one request fails, the others still resolve and their data is displayed.  This will provide a more robust user experience.",
+      "line_range": ""
+    },
+    {
+      "category": "improvement",
+      "severity": "info",
+      "file_path": "rocket-faq-frontend/src/components/DashboardPanel.tsx",
+      "description": "The component uses a lot of state variables. Consider using a state management library like Zustand or Redux if the application grows to manage the state more effectively.",
+      "suggestion": "Introduce a state management library to handle the application's state, especially if the application scales. This will improve maintainability and scalability.",
+      "line_range": ""
+    },
+    {
+      "category": "improvement",
+      "severity": "info",
+      "file_path": "rocket-faq-frontend/src/components/DashboardPanel.tsx",
+      "description": "The component fetches data on mount using `useEffect` with an empty dependency array. Consider adding a refresh button that triggers the `fetchAll` function to allow users to manually refresh the data.",
+      "suggestion": "Add a refresh button that calls the `fetchAll` function to allow users to manually update the dashboard data.",
+      "line_range": ""
+    },
+    {
+      "category": "improvement",
+      "severity": "info",
+      "file_path": "rocket-faq-frontend/src/components/DashboardPanel.tsx",
+      "description": "The component uses `any` type in the `disclaimers_count` property of the `GovernanceData` interface. This should be replaced with a more specific type.",
+      "suggestion": "Update the `disclaimers_count` property in the `GovernanceData` interface to use a more specific type, such as `Record<string, number>`, to improve type safety.",
+      "line_range": ""
+    },
+    {
+      "category": "improvement",
+      "severity": "info",
+      "file_path": "rocket-faq-frontend/src/components/DashboardPanel.tsx",
+      "description": "The component uses a hardcoded slice of 5 findings in the report details. This should be configurable or dynamic.",
+      "suggestion": "Make the number of displayed findings configurable, either through a prop or a state variable, to allow users to see more or fewer findings at a glance.",
+      "line_range": ""
+    }
+  ],
+  "recommendations": [
+    "Address the critical security vulnerability in `rocket-faq-backend/app/core/vectorstore.py` by securely managing the Pinecone API key, preferably using a secrets management system instead of directly reading from settings.",
+    "Refactor the complex logic in `rocket-faq-backend/app/core/chunking.py`'s `chunk_faq_document` function to improve readability and maintainability, potentially by breaking it down into smaller, more manageable functions.",
+    "Implement proper error handling in `rocket-faq-backend/app/core/vectorstore.py`'s `upsert_chunks` function to prevent data loss or incomplete upserts in case of Pinecone service unavailability or errors.",
+    "Improve input validation and sanitization, especially in `rocket-faq-backend/app/api/chat.py` and `rocket-faq-frontend/src/api/client.ts`, to prevent injection attacks and ensure data integrity.",
+    "Add comprehensive type hints throughout the codebase, particularly in `rocket-faq-backend/app/core/cache.py`, `rocket-faq-backend/app/core/llm.py`, `rocket-faq-backend/app/core/embeddings.py`, and `rocket-faq-frontend/src/api/client.ts`, to enhance code readability, maintainability, and reduce potential runtime errors."
+  ],
+  "metadata": {
+    "files_analyzed": 48,
+    "file_list": [
+      "rocket-faq-backend/app/config.py",
+      "rocket-faq-backend/app/__init__.py",
+      "rocket-faq-backend/app/main.py",
+      "rocket-faq-backend/app/middleware/auth.py",
+      "rocket-faq-backend/app/middleware/security.py",
+      "rocket-faq-backend/app/middleware/__init__.py",
+      "rocket-faq-backend/app/middleware/rate_limit.py",
+      "rocket-faq-backend/app/core/chunking.py",
+      "rocket-faq-backend/app/core/vectorstore.py",
+      "rocket-faq-backend/app/core/cache.py",
+      "rocket-faq-backend/app/core/__init__.py",
+      "rocket-faq-backend/app/core/llm.py",
+      "rocket-faq-backend/app/core/embeddings.py",
+      "rocket-faq-backend/app/core/rag.py",
+      "rocket-faq-backend/app/guardrails/injection.py",
+      "rocket-faq-backend/app/guardrails/__init__.py",
+      "rocket-faq-backend/app/guardrails/topic.py",
+      "rocket-faq-backend/app/guardrails/output.py",
+      "rocket-faq-backend/app/guardrails/pii.py",
+      "rocket-faq-backend/app/agents/tech_debt.py",
+      "rocket-faq-backend/app/agents/coordinator.py",
+      "rocket-faq-backend/app/agents/models.py",
+      "rocket-faq-backend/app/agents/code_reviewer.py",
+      "rocket-faq-backend/app/agents/__init__.py",
+      "rocket-faq-backend/app/agents/documenter.py",
+      "rocket-faq-backend/app/agents/base.py",
+      "rocket-faq-backend/app/observability/cost_tracker.py",
+      "rocket-faq-backend/app/observability/audit.py",
+      "rocket-faq-backend/app/observability/__init__.py",
+      "rocket-faq-backend/app/observability/logger.py",
+      "rocket-faq-backend/app/api/evaluation.py",
+      "rocket-faq-backend/app/api/__init__.py",
+      "rocket-faq-backend/app/api/agents.py",
+      "rocket-faq-backend/app/api/chat.py",
+      "rocket-faq-backend/app/api/governance.py",
+      "rocket-faq-backend/app/evaluation/metrics.py",
+      "rocket-faq-backend/app/evaluation/__init__.py",
+      "rocket-faq-backend/app/evaluation/judge.py",
+      "rocket-faq-backend/scripts/ingest.py",
+      "rocket-faq-backend/scripts/run_agents.py",
+      "rocket-faq-frontend/src/api/client.ts",
+      "rocket-faq-frontend/src/App.tsx",
+      "rocket-faq-frontend/src/main.tsx",
+      "rocket-faq-frontend/src/components/ChatWindow.tsx",
+      "rocket-faq-frontend/src/components/EvalPanel.tsx",
+      "rocket-faq-frontend/src/components/DashboardPanel.tsx",
+      "rocket-faq-frontend/src/components/Header.tsx",
+      "rocket-faq-frontend/src/components/ChatMessage.tsx"
+    ],
+    "duration_seconds": 131.8
+  }
+}

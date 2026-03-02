@@ -1,0 +1,453 @@
+{
+  "agent_name": "documenter",
+  "timestamp": "2026-03-02T18:39:08.030143+00:00",
+  "summary": "Generated documentation for 48 source files across the backend and frontend.",
+  "findings": [
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/config.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/config.py\",\n  \"purpose\": \"Defines the application settings using Pydantic and provides a cached function to access them.\",\n  \"classes\": [\n    {\n      \"name\": \"Settings\",\n      \"description\": \"Pydantic model defining the application settings.  Settings are loaded from environment variables and can be overridden.\",\n      \"methods\": []\n    }\n  ],\n  \"functions\": [\n    {\n      \"name\": \"get_settings\",\n      \"description\": \"Returns a cached instance of the Settings class.\",\n      \"params\": \"None\",\n      \"returns\": \"Settings\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"pydantic_settings\",\n    \"functools\",\n    \"typing\"\n  ]\n}",
+      "suggestion": "Defines the application settings using Pydantic and provides a cached function to access them.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/__init__.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/__init__.py\",\n  \"purpose\": \"This file indicates that the 'app' directory is a Python package.\",\n  \"classes\": [],\n  \"functions\": [],\n  \"endpoints\": [],\n  \"dependencies\": []\n}",
+      "suggestion": "This file indicates that the 'app' directory is a Python package.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/main.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/main.py\",\n  \"purpose\": \"This is the main application file that initializes the FastAPI app, sets up middleware, includes routers, and defines health and stats endpoints.\",\n  \"classes\": [],\n  \"functions\": [],\n  \"endpoints\": [\n    {\n      \"method\": \"GET\",\n      \"path\": \"/health\",\n      \"description\": \"Returns the health status of the application and cache statistics.\"\n    },\n    {\n      \"method\": \"GET\",\n      \"path\": \"/stats\",\n      \"description\": \"Returns usage statistics and cache statistics.\"\n    }\n  ],\n  \"dependencies\": [\n    \"fastapi\",\n    \"fastapi.middleware.cors\",\n    \"slowapi.errors\",\n    \"slowapi\",\n    \"app.api.chat\",\n    \"app.api.evaluation\",\n    \"app.api.governance\",\n    \"app.api.agents\",\n    \"app.config\",\n    \"app.core.cache\",\n    \"app.middleware.rate_limit\",\n    \"app.middleware.security\",\n    \"app.observability.cost_tracker\",\n    \"app.observability.logger\"\n  ]\n}",
+      "suggestion": "This is the main application file that initializes the FastAPI app, sets up middleware, includes routers, and defines health and stats endpoints.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/middleware/auth.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/middleware/auth.py\",\n  \"purpose\": \"Optional API key authentication for endpoints.\",\n  \"classes\": [],\n  \"functions\": [\n    {\n      \"name\": \"verify_api_key\",\n      \"description\": \"Verify API key if one is configured. Skip check if no key is set.\",\n      \"params\": \"api_key: str | None = Security(_api_key_header)\",\n      \"returns\": \"str | None\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"fastapi\",\n    \"fastapi.security\",\n    \"app.config\",\n    \"app.observability.logger\"\n  ]\n}",
+      "suggestion": "Optional API key authentication for endpoints.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/middleware/security.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/middleware/security.py\",\n  \"purpose\": \"Security headers and request ID middleware.\",\n  \"classes\": [\n    {\n      \"name\": \"SecurityHeadersMiddleware\",\n      \"description\": \"Add standard security headers to every response.\",\n      \"methods\": [\n        \"dispatch\"\n      ]\n    },\n    {\n      \"name\": \"RequestIDMiddleware\",\n      \"description\": \"Attach a unique request ID to each request for tracing.\",\n      \"methods\": [\n        \"dispatch\"\n      ]\n    }\n  ],\n  \"functions\": [],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"uuid\",\n    \"structlog\",\n    \"starlette.middleware.base\",\n    \"starlette.requests\",\n    \"starlette.responses\"\n  ]\n}",
+      "suggestion": "Security headers and request ID middleware.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/middleware/__init__.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/middleware/__init__.py\",\n  \"purpose\": \"Empty init file for the middleware package.\",\n  \"classes\": [],\n  \"functions\": [],\n  \"endpoints\": [],\n  \"dependencies\": []\n}",
+      "suggestion": "Empty init file for the middleware package.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/middleware/rate_limit.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/middleware/rate_limit.py\",\n  \"purpose\": \"Defines a rate limiting middleware using `slowapi` to protect API endpoints from abuse.\",\n  \"classes\": [],\n  \"functions\": [\n    {\n      \"name\": \"get_client_ip\",\n      \"description\": \"Extracts the client IP address from the request, handling the `X-Forwarded-For` header when present (e.g., behind a proxy like Render).\",\n      \"params\": \"request: Request\",\n      \"returns\": \"str: The client IP address.\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"slowapi\",\n    \"starlette\",\n    \"app.config\",\n    \"app.observability.logger\"\n  ]\n}",
+      "suggestion": "Defines a rate limiting middleware using `slowapi` to protect API endpoints from abuse.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/core/chunking.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/core/chunking.py\",\n  \"purpose\": \"Defines functions for chunking FAQ documents into smaller, more manageable pieces for vector storage and retrieval.\",\n  \"classes\": [\n    {\n      \"name\": \"Chunk\",\n      \"description\": \"Represents a chunk of text with associated metadata.\",\n      \"methods\": []\n    }\n  ],\n  \"functions\": [\n    {\n      \"name\": \"chunk_faq_document\",\n      \"description\": \"Splits a FAQ markdown document into chunks, where each chunk represents a Q&A pair. Preserves section and subsection context in the metadata.\",\n      \"params\": \"content: str\",\n      \"returns\": \"list[Chunk]: A list of Chunk objects.\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"re\",\n    \"dataclasses\",\n    \"app.observability.logger\"\n  ]\n}",
+      "suggestion": "Defines functions for chunking FAQ documents into smaller, more manageable pieces for vector storage and retrieval.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/core/vectorstore.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/core/vectorstore.py\",\n  \"purpose\": \"Provides functions for interacting with a Pinecone vector database, including creating the index, upserting chunks, and searching for similar documents.\",\n  \"classes\": [],\n  \"functions\": [\n    {\n      \"name\": \"get_pinecone_index\",\n      \"description\": \"Retrieves the Pinecone index. Initializes the connection if it doesn't exist.\",\n      \"params\": \"\",\n      \"returns\": \"Pinecone.Index: The Pinecone index object.\"\n    },\n    {\n      \"name\": \"ensure_index_exists\",\n      \"description\": \"Ensures that the Pinecone index exists. Creates it if it doesn't, using the configured settings.\",\n      \"params\": \"\",\n      \"returns\": \"None\"\n    },\n    {\n      \"name\": \"upsert_chunks\",\n      \"description\": \"Upserts a list of chunks into the Pinecone index.  Generates embeddings for the chunks and uploads them in batches.\",\n      \"params\": \"chunks: list[Chunk], batch_size: int = 50\",\n      \"returns\": \"None\"\n    },\n    {\n      \"name\": \"search\",\n      \"description\": \"Searches the Pinecone index for documents similar to the given query.\",\n      \"params\": \"query: str, top_k: int | None = None\",\n      \"returns\": \"list[dict]: A list of dictionaries, where each dictionary represents a search result with 'id', 'score', 'text', and 'metadata'.\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"time\",\n    \"pinecone\",\n    \"app.config\",\n    \"app.core.chunking\",\n    \"app.core.embeddings\",\n    \"app.core.cache\",\n    \"app.observability.logger\"\n  ]\n}",
+      "suggestion": "Provides functions for interacting with a Pinecone vector database, including creating the index, upserting chunks, and searching for similar documents.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/core/cache.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/core/cache.py\",\n  \"purpose\": \"Provides an in-memory cache with TTL and LRU eviction for RAG responses and embeddings.\",\n  \"classes\": [],\n  \"functions\": [\n    {\n      \"name\": \"_normalize_question\",\n      \"description\": \"Lowercase, strip whitespace and trailing punctuation for cache key.\",\n      \"params\": \"question: str\",\n      \"returns\": \"str\"\n    },\n    {\n      \"name\": \"_cache_key\",\n      \"description\": \"Generate a stable hash key for a text string.\",\n      \"params\": \"text: str\",\n      \"returns\": \"str\"\n    },\n    {\n      \"name\": \"get_cached_rag_response\",\n      \"description\": \"Return cached RAGResponse or None.\",\n      \"params\": \"question: str\",\n      \"returns\": \"RAGResponse or None\"\n    },\n    {\n      \"name\": \"set_cached_rag_response\",\n      \"description\": \"Store a RAGResponse in cache.\",\n      \"params\": \"question: str, response\",\n      \"returns\": \"None\"\n    },\n    {\n      \"name\": \"get_cached_embedding\",\n      \"description\": \"Return cached embedding vector or None.\",\n      \"params\": \"text: str\",\n      \"returns\": \"list[float] | None\"\n    },\n    {\n      \"name\": \"set_cached_embedding\",\n      \"description\": \"Store an embedding vector in cache.\",\n      \"params\": \"text: str, vector: list[float]\",\n      \"returns\": \"None\"\n    },\n    {\n      \"name\": \"get_cache_stats\",\n      \"description\": \"Return current cache statistics for observability.\",\n      \"params\": \"\",\n      \"returns\": \"dict\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"hashlib\",\n    \"threading\",\n    \"cachetools\",\n    \"app.config\",\n    \"app.observability.logger\"\n  ]\n}",
+      "suggestion": "Provides an in-memory cache with TTL and LRU eviction for RAG responses and embeddings.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/core/__init__.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/core/__init__.py\",\n  \"purpose\": \"This is an empty initialization file for the `app.core` package.\",\n  \"classes\": [],\n  \"functions\": [],\n  \"endpoints\": [],\n  \"dependencies\": []\n}",
+      "suggestion": "This is an empty initialization file for the `app.core` package.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/core/llm.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/core/llm.py\",\n  \"purpose\": \"Provides functions for interacting with a Language Model (LLM) via the OpenAI API, including budget tracking.\",\n  \"classes\": [\n    {\n      \"name\": \"BudgetExceededError\",\n      \"description\": \"Raised when the token budget has been exhausted.\",\n      \"methods\": []\n    }\n  ],\n  \"functions\": [\n    {\n      \"name\": \"get_openrouter_client\",\n      \"description\": \"Returns the OpenAI client, initializing it if it doesn't exist.\",\n      \"params\": \"\",\n      \"returns\": \"OpenAI\"\n    },\n    {\n      \"name\": \"chat_completion\",\n      \"description\": \"Sends a chat completion request to the LLM and returns the response content.\",\n      \"params\": \"messages: list[dict], model: str | None = None, temperature: float = 0.3, max_tokens: int | None = None\",\n      \"returns\": \"str\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"openai\",\n    \"app.config\",\n    \"app.observability.logger\",\n    \"app.observability.cost_tracker\"\n  ]\n}",
+      "suggestion": "Provides functions for interacting with a Language Model (LLM) via the OpenAI API, including budget tracking.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/core/embeddings.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/core/embeddings.py\",\n  \"purpose\": \"Provides embedding functionality, allowing switching between local models (sentence-transformers) and the HuggingFace Inference API.\",\n  \"classes\": [\n    {\n      \"name\": \"EmbeddingsProvider\",\n      \"description\": \"Abstract base class for embedding providers.\",\n      \"methods\": []\n    },\n    {\n      \"name\": \"LocalEmbeddings\",\n      \"description\": \"Embeddings provider using sentence-transformers via LangChain.\",\n      \"methods\": []\n    },\n    {\n      \"name\": \"APIEmbeddings\",\n      \"description\": \"Embeddings provider using the HuggingFace Inference API.\",\n      \"methods\": []\n    }\n  ],\n  \"functions\": [\n    {\n      \"name\": \"get_embeddings_provider\",\n      \"description\": \"Returns the configured embeddings provider (either LocalEmbeddings or APIEmbeddings).\",\n      \"params\": \"\",\n      \"returns\": \"EmbeddingsProvider\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"app.config\",\n    \"app.observability.logger\",\n    \"abc\",\n    \"math\"\n  ]\n}",
+      "suggestion": "Provides embedding functionality, allowing switching between local models (sentence-transformers) and the HuggingFace Inference API.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/core/rag.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/core/rag.py\",\n  \"purpose\": \"Implements the Retrieval-Augmented Generation (RAG) pipeline for answering questions using a knowledge base, including input/output guardrails for security and quality.\",\n  \"classes\": [\n    {\n      \"name\": \"RAGResponse\",\n      \"description\": \"Data class representing the response from the RAG pipeline.\",\n      \"methods\": []\n    }\n  ],\n  \"functions\": [\n    {\n      \"name\": \"generate_answer\",\n      \"description\": \"Executes the full RAG pipeline, including input guardrails, retrieval, generation, output guardrails, and caching.\",\n      \"params\": \"query: str, top_k: int | None = None, request_id: str = \\\"\\\"\",\n      \"returns\": \"RAGResponse\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"app.config\",\n    \"app.core.vectorstore\",\n    \"app.core.llm\",\n    \"app.core.cache\",\n    \"app.guardrails.pii\",\n    \"app.guardrails.injection\",\n    \"app.guardrails.topic\",\n    \"app.guardrails.output\",\n    \"app.observability.audit\",\n    \"app.observability.logger\",\n    \"dataclasses\",\n    \"datetime\"\n  ]\n}",
+      "suggestion": "Implements the Retrieval-Augmented Generation (RAG) pipeline for answering questions using a knowledge base, including input/output guardrails for security and quality.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/guardrails/injection.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/guardrails/injection.py\",\n  \"purpose\": \"Detects prompt injection attacks in user input using regular expression pattern matching.\",\n  \"classes\": [\n    {\n      \"name\": \"InjectionScanResult\",\n      \"description\": \"Data class representing the result of a prompt injection scan.\",\n      \"methods\": []\n    }\n  ],\n  \"functions\": [\n    {\n      \"name\": \"scan_injection\",\n      \"description\": \"Scans the input text for prompt injection patterns and returns an InjectionScanResult.\",\n      \"params\": \"text: str\",\n      \"returns\": \"InjectionScanResult\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"re\",\n    \"dataclasses\"\n  ]\n}",
+      "suggestion": "Detects prompt injection attacks in user input using regular expression pattern matching.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/guardrails/__init__.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/guardrails/__init__.py\",\n  \"purpose\": \"This file appears to be an empty initialization file for the `app.guardrails` package. It likely serves to mark the directory as a Python package.\",\n  \"classes\": [],\n  \"functions\": [],\n  \"endpoints\": [],\n  \"dependencies\": []\n}",
+      "suggestion": "This file appears to be an empty initialization file for the `app.guardrails` package. It likely serves to mark the directory as a Python package.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/guardrails/topic.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/guardrails/topic.py\",\n  \"purpose\": \"This module provides functionality to detect if a user question is off-topic by checking for mortgage-related keywords and allowing greetings.\",\n  \"classes\": [\n    {\n      \"name\": \"TopicScanResult\",\n      \"description\": \"Dataclass to store the results of the topic scan.\",\n      \"methods\": []\n    }\n  ],\n  \"functions\": [\n    {\n      \"name\": \"scan_topic\",\n      \"description\": \"Checks if a question is related to mortgages/Rocket Mortgage.\",\n      \"params\": \"question: str\",\n      \"returns\": \"TopicScanResult\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"re\",\n    \"dataclasses\"\n  ]\n}",
+      "suggestion": "This module provides functionality to detect if a user question is off-topic by checking for mortgage-related keywords and allowing greetings.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/guardrails/output.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/guardrails/output.py\",\n  \"purpose\": \"This module provides output guardrails for LLM responses, including disclaimer injection, PII leak detection, and low confidence flagging.\",\n  \"classes\": [\n    {\n      \"name\": \"OutputGuardrailResult\",\n      \"description\": \"Dataclass to store the results of the output guardrail processing.\",\n      \"methods\": []\n    }\n  ],\n  \"functions\": [\n    {\n      \"name\": \"process_output\",\n      \"description\": \"Applies all output guardrails to the LLM response.\",\n      \"params\": \"answer: str, source_scores: list[float], confidence_threshold: float = 0.5\",\n      \"returns\": \"OutputGuardrailResult\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"re\",\n    \"dataclasses\",\n    \"app.guardrails.pii\"\n  ]\n}",
+      "suggestion": "This module provides output guardrails for LLM responses, including disclaimer injection, PII leak detection, and low confidence flagging.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/guardrails/pii.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/guardrails/pii.py\",\n  \"purpose\": \"Provides functions for detecting and redacting Personally Identifiable Information (PII) from text using regular expressions. Includes allowlists for specific phone numbers and email domains to avoid redacting known Rocket Mortgage contact information.\",\n  \"classes\": [\n    {\n      \"name\": \"PIIMatch\",\n      \"description\": \"Dataclass representing a single PII match found in the text.\",\n      \"methods\": []\n    },\n    {\n      \"name\": \"PIIScanResult\",\n      \"description\": \"Dataclass representing the result of a PII scan, including whether PII was found, a list of matches, and the redacted text.\",\n      \"methods\": []\n    }\n  ],\n  \"functions\": [\n    {\n      \"name\": \"_normalize_phone\",\n      \"description\": \"Strips formatting from a phone number for allowlist comparison.\",\n      \"params\": \"phone: str\",\n      \"returns\": \"str\"\n    },\n    {\n      \"name\": \"_is_allowed_phone\",\n      \"description\": \"Checks if a phone number is in the allowlist.\",\n      \"params\": \"phone: str\",\n      \"returns\": \"bool\"\n    },\n    {\n      \"name\": \"_is_allowed_email\",\n      \"description\": \"Checks if an email domain is in the allowlist.\",\n      \"params\": \"email: str\",\n      \"returns\": \"bool\"\n    },\n    {\n      \"name\": \"scan_pii\",\n      \"description\": \"Scans text for PII patterns and returns matches with a redacted version of the text.\",\n      \"params\": \"text: str\",\n      \"returns\": \"PIIScanResult\"\n    },\n    {\n      \"name\": \"redact_pii\",\n      \"description\": \"Convenience wrapper: returns redacted text only.\",\n      \"params\": \"text: str\",\n      \"returns\": \"str\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"re\",\n    \"dataclasses\"\n  ]\n}",
+      "suggestion": "Provides functions for detecting and redacting Personally Identifiable Information (PII) from text using regular expressions. Includes allowlists for specific phone numbers and email domains to avoid redacting known Rocket Mortgage contact information.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/agents/tech_debt.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/agents/tech_debt.py\",\n  \"purpose\": \"Implements an agent that analyzes code for technical debt using both static analysis (regex-based) and LLM-powered insights.\",\n  \"classes\": [\n    {\n      \"name\": \"TechDebtAgent\",\n      \"description\": \"Agent that identifies technical debt, TODOs, complexity, missing tests, and hardcoded values.\",\n      \"methods\": [\n        \"name\",\n        \"description\",\n        \"_system_prompt\",\n        \"_get_file_patterns\",\n        \"_build_analysis_prompt\",\n        \"_parse_findings\",\n        \"analyze\",\n        \"_static_analysis\"\n      ]\n    }\n  ],\n  \"functions\": [],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"re\",\n    \"pathlib\",\n    \"app.agents.base\",\n    \"app.agents.models\",\n    \"app.observability.logger\"\n  ]\n}",
+      "suggestion": "Implements an agent that analyzes code for technical debt using both static analysis (regex-based) and LLM-powered insights.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/agents/coordinator.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/agents/coordinator.py\",\n  \"purpose\": \"Orchestrates multiple analysis agents (CodeReviewAgent, TechDebtAgent, DocumenterAgent) to produce a combined report of code quality, technical debt, and documentation status.\",\n  \"classes\": [\n    {\n      \"name\": \"AgentCoordinator\",\n      \"description\": \"Orchestrates all analysis agents and produces a combined report.\",\n      \"methods\": [\n        \"__init__\",\n        \"run_all\",\n        \"run_single\",\n        \"_generate_executive_summary\",\n        \"save_report\"\n      ]\n    }\n  ],\n  \"functions\": [],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"json\",\n    \"time\",\n    \"collections\",\n    \"pathlib\",\n    \"app.agents.code_reviewer\",\n    \"app.agents.documenter\",\n    \"app.agents.tech_debt\",\n    \"app.agents.models\",\n    \"app.config\",\n    \"app.core.llm\",\n    \"app.observability.logger\"\n  ]\n}",
+      "suggestion": "Orchestrates multiple analysis agents (CodeReviewAgent, TechDebtAgent, DocumenterAgent) to produce a combined report of code quality, technical debt, and documentation status.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/agents/models.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/agents/models.py\",\n  \"purpose\": \"Defines data models for the multi-agent analysis system, including Severity, Finding, AgentReport, and CoordinatorReport.\",\n  \"classes\": [],\n  \"functions\": [],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"enum\",\n    \"dataclasses\",\n    \"datetime\"\n  ],\n  \"data_classes\": [\n    {\n      \"name\": \"Finding\",\n      \"description\": \"A single finding from an agent analysis.\",\n      \"fields\": [\n        \"category\",\n        \"severity\",\n        \"file_path\",\n        \"description\",\n        \"suggestion\",\n        \"line_range\"\n      ]\n    },\n    {\n      \"name\": \"AgentReport\",\n      \"description\": \"Complete report from a single agent run.\",\n      \"fields\": [\n        \"agent_name\",\n        \"timestamp\",\n        \"summary\",\n        \"findings\",\n        \"recommendations\",\n        \"metadata\"\n      ],\n      \"methods\": [\n        \"to_dict\"\n      ]\n    },\n    {\n      \"name\": \"CoordinatorReport\",\n      \"description\": \"Combined report from all agents.\",\n      \"fields\": [\n        \"timestamp\",\n        \"agent_reports\",\n        \"executive_summary\",\n        \"total_findings\",\n        \"findings_by_severity\",\n        \"top_recommendations\",\n        \"metadata\"\n      ]\n    }\n  ],\n  \"enums\": [\n    {\n      \"name\": \"Severity\",\n      \"description\": \"Represents the severity level of a finding.\",\n      \"values\": [\n        \"INFO\",\n        \"LOW\",\n        \"MEDIUM\",\n        \"HIGH\",\n        \"CRITICAL\"\n      ]\n    }\n  ]\n}",
+      "suggestion": "Defines data models for the multi-agent analysis system, including Severity, Finding, AgentReport, and CoordinatorReport.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/agents/code_reviewer.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/agents/code_reviewer.py\",\n  \"purpose\": \"Implements the CodeReviewAgent, which analyzes source files for code quality, security vulnerabilities, and best practice violations.\",\n  \"classes\": [\n    {\n      \"name\": \"CodeReviewAgent\",\n      \"description\": \"Analyzes source code for quality issues, security concerns, and best practice violations\",\n      \"methods\": [\n        \"name\",\n        \"description\",\n        \"_system_prompt\",\n        \"_get_file_patterns\",\n        \"_build_analysis_prompt\",\n        \"_parse_findings\"\n      ]\n    }\n  ],\n  \"functions\": [],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"app.agents.base.BaseAgent\",\n    \"app.agents.models.Finding\",\n    \"app.agents.models.Severity\"\n  ]\n}",
+      "suggestion": "Implements the CodeReviewAgent, which analyzes source files for code quality, security vulnerabilities, and best practice violations.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/agents/__init__.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/agents/__init__.py\",\n  \"purpose\": \"This is an empty initialization file for the `app.agents` package.\",\n  \"classes\": [],\n  \"functions\": [],\n  \"endpoints\": [],\n  \"dependencies\": []\n}",
+      "suggestion": "This is an empty initialization file for the `app.agents` package.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/agents/documenter.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/agents/documenter.py\",\n  \"purpose\": \"Generates comprehensive markdown documentation for the codebase.\",\n  \"classes\": [\n    {\n      \"name\": \"DocumenterAgent\",\n      \"description\": \"Agent that generates documentation for the project.\",\n      \"methods\": []\n    }\n  ],\n  \"functions\": [],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"app.agents.base\",\n    \"app.agents.models\",\n    \"app.observability.logger\",\n    \"json\",\n    \"re\"\n  ]\n}",
+      "suggestion": "Generates comprehensive markdown documentation for the codebase.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/agents/base.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/agents/base.py\",\n  \"purpose\": \"Provides a base class for all analysis agents.\",\n  \"classes\": [\n    {\n      \"name\": \"BaseAgent\",\n      \"description\": \"Abstract base for analysis agents.\",\n      \"methods\": [\n        \"name\",\n        \"description\",\n        \"_system_prompt\",\n        \"_get_file_patterns\",\n        \"_build_analysis_prompt\",\n        \"_parse_findings\",\n        \"analyze\"\n      ]\n    }\n  ],\n  \"functions\": [],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"app.agents.models\",\n    \"app.config\",\n    \"app.core.llm\",\n    \"app.observability.logger\",\n    \"json\",\n    \"re\",\n    \"time\",\n    \"abc\",\n    \"pathlib\"\n  ]\n}",
+      "suggestion": "Provides a base class for all analysis agents.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/observability/cost_tracker.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/observability/cost_tracker.py\",\n  \"purpose\": \"Token usage tracking with configurable daily/monthly budgets.\",\n  \"classes\": [\n    {\n      \"name\": \"UsageRecord\",\n      \"description\": \"Dataclass to store token usage information.\",\n      \"methods\": []\n    },\n    {\n      \"name\": \"UsageTracker\",\n      \"description\": \"In-memory token usage tracker with daily budget enforcement.\",\n      \"methods\": []\n    }\n  ],\n  \"functions\": [],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"app.config\",\n    \"app.observability.logger\",\n    \"threading\",\n    \"datetime\",\n    \"dataclasses\"\n  ]\n}",
+      "suggestion": "Token usage tracking with configurable daily/monthly budgets.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/observability/audit.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/observability/audit.py\",\n  \"purpose\": \"Provides functionality for writing and updating audit logs in JSONL format, and for generating governance summaries from the logs.  The audit logs capture Q&A interactions, including details about PII detection, injection attempts, and user feedback.\",\n  \"classes\": [\n    {\n      \"name\": \"AuditEntry\",\n      \"description\": \"Data class representing a single audit log entry.\",\n      \"methods\": []\n    }\n  ],\n  \"functions\": [\n    {\n      \"name\": \"write_audit_entry\",\n      \"description\": \"Appends a single audit entry to the audit log file as a JSON line.\",\n      \"params\": \"entry: AuditEntry\",\n      \"returns\": \"None\"\n    },\n    {\n      \"name\": \"update_audit_feedback\",\n      \"description\": \"Finds and updates the feedback field for a given request_id in the audit log.\",\n      \"params\": \"request_id: str, rating: str, comment: str | None = None\",\n      \"returns\": \"bool\"\n    },\n    {\n      \"name\": \"get_governance_summary\",\n      \"description\": \"Aggregates statistics from the audit log for the governance endpoint.\",\n      \"params\": \"None\",\n      \"returns\": \"dict\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"json\",\n    \"threading\",\n    \"dataclasses\",\n    \"datetime\",\n    \"pathlib\",\n    \"app.config\",\n    \"app.observability.logger\"\n  ]\n}",
+      "suggestion": "Provides functionality for writing and updating audit logs in JSONL format, and for generating governance summaries from the logs.  The audit logs capture Q&A interactions, including details about PII detection, injection attempts, and user feedback.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/observability/__init__.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/observability/__init__.py\",\n  \"purpose\": \"This is an initialization file for the `app.observability` package. It doesn't contain any code, but its presence indicates that the directory should be treated as a Python package.\",\n  \"classes\": [],\n  \"functions\": [],\n  \"endpoints\": [],\n  \"dependencies\": []\n}",
+      "suggestion": "This is an initialization file for the `app.observability` package. It doesn't contain any code, but its presence indicates that the directory should be treated as a Python package.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/observability/logger.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/observability/logger.py\",\n  \"purpose\": \"Configures and provides access to a structured logger using structlog.\",\n  \"classes\": [],\n  \"functions\": [\n    {\n      \"name\": \"setup_logging\",\n      \"description\": \"Configures structlog with processors and settings from the application configuration.\",\n      \"params\": \"None\",\n      \"returns\": \"None\"\n    },\n    {\n      \"name\": \"get_logger\",\n      \"description\": \"Returns a structlog BoundLogger instance.\",\n      \"params\": \"name: str = __name__\",\n      \"returns\": \"structlog.BoundLogger\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"structlog\",\n    \"logging\",\n    \"app.config\"\n  ]\n}",
+      "suggestion": "Configures and provides access to a structured logger using structlog.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/api/evaluation.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/api/evaluation.py\",\n  \"purpose\": \"Defines API endpoints for evaluating the RAG system, including retrieval quality and response quality using LLM-as-judge.\",\n  \"classes\": [\n    {\n      \"name\": \"EvalRetrievalRequest\",\n      \"description\": \"Request model for retrieval evaluation, specifying the number of top results to consider.\",\n      \"methods\": []\n    },\n    {\n      \"name\": \"SingleEvalResult\",\n      \"description\": \"Response model for a single query's retrieval evaluation results.\",\n      \"methods\": []\n    },\n    {\n      \"name\": \"RetrievalEvalResponse\",\n      \"description\": \"Response model for retrieval evaluation, containing results for all queries and aggregate metrics.\",\n      \"methods\": []\n    },\n    {\n      \"name\": \"JudgeRequest\",\n      \"description\": \"Request model for judging a single question.\",\n      \"methods\": []\n    },\n    {\n      \"name\": \"JudgeResponse\",\n      \"description\": \"Response model for judging a single question, including the answer, evaluation, and sources.\",\n      \"methods\": []\n    },\n    {\n      \"name\": \"FullEvalResponse\",\n      \"description\": \"Response model for the full evaluation, including retrieval metrics, judge evaluations, and an overall summary.\",\n      \"methods\": []\n    }\n  ],\n  \"functions\": [],\n  \"endpoints\": [\n    {\n      \"method\": \"POST\",\n      \"path\": \"/api/eval/retrieval\",\n      \"description\": \"Evaluates retrieval quality using precision, recall, and MRR. Requires an API key. Rate limited.\",\n      \"schema\": \"EvalRetrievalRequest\"\n    },\n    {\n      \"method\": \"POST\",\n      \"path\": \"/api/eval/judge\",\n      \"description\": \"Evaluates a single question using LLM-as-judge. Requires an API key. Rate limited.\",\n      \"schema\": \"JudgeRequest\"\n    },\n    {\n      \"method\": \"POST\",\n      \"path\": \"/api/eval/full\",\n      \"description\": \"Runs a full evaluation: retrieval metrics + LLM-as-judge on all test queries. Requires an API key. Rate limited.\",\n      \"schema\": null\n    }\n  ],\n  \"dependencies\": [\n    \"fastapi\",\n    \"pydantic\",\n    \"app.config\",\n    \"app.core.vectorstore\",\n    \"app.core.rag\",\n    \"app.evaluation.metrics\",\n    \"app.evaluation.judge\",\n    \"app.middleware.auth\",\n    \"app.middleware.rate_limit\",\n    \"app.observability.logger\"\n  ]\n}",
+      "suggestion": "Defines API endpoints for evaluating the RAG system, including retrieval quality and response quality using LLM-as-judge.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/api/__init__.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/api/__init__.py\",\n  \"purpose\": \"This file serves as an initialization module for the `app.api` package. Currently, it doesn't contain any code, but it allows the directory to be treated as a Python package.\",\n  \"classes\": [],\n  \"functions\": [],\n  \"endpoints\": [],\n  \"dependencies\": []\n}",
+      "suggestion": "This file serves as an initialization module for the `app.api` package. Currently, it doesn't contain any code, but it allows the directory to be treated as a Python package.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/api/agents.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/api/agents.py\",\n  \"purpose\": \"Defines API endpoints for running various agents for code review, documentation, and tech debt analysis.\",\n  \"classes\": [],\n  \"functions\": [\n    {\n      \"name\": \"_run_agent\",\n      \"description\": \"Runs a single agent, saves the report, and returns the results.\",\n      \"params\": \"agent_name: str\",\n      \"returns\": \"dict\"\n    }\n  ],\n  \"endpoints\": [\n    {\n      \"method\": \"POST\",\n      \"path\": \"/api/agents/review\",\n      \"description\": \"Runs the code review agent. Requires an API key. Rate limited.\",\n      \"schema\": null\n    },\n    {\n      \"method\": \"POST\",\n      \"path\": \"/api/agents/document\",\n      \"description\": \"Runs the documenter agent. Requires an API key. Rate limited.\",\n      \"schema\": null\n    },\n    {\n      \"method\": \"POST\",\n      \"path\": \"/api/agents/tech-debt\",\n      \"description\": \"Runs the tech debt analyzer agent. Requires an API key. Rate limited.\",\n      \"schema\": null\n    },\n    {\n      \"method\": \"POST\",\n      \"path\": \"/api/agents/full\",\n      \"description\": \"Runs all agents via the coordinator. Requires an API key. Rate limited.\",\n      \"schema\": null\n    },\n    {\n      \"method\": \"GET\",\n      \"path\": \"/api/agents/reports\",\n      \"description\": \"Lists all saved agent reports. Requires an API key. Rate limited.\",\n      \"schema\": null\n    },\n    {\n      \"method\": \"GET\",\n      \"path\": \"/api/agents/reports/{filename}\",\n      \"description\": \"Gets a specific saved report by filename. Requires an API key. Rate limited.\",\n      \"schema\": null\n    }\n  ],\n  \"dependencies\": [\n    \"fastapi\",\n    \"fastapi.responses\",\n    \"app.agents.coordinator\",\n    \"app.config\",\n    \"app.core.llm\",\n    \"app.middleware.auth\",\n    \"app.middleware.rate_limit\",\n    \"app.observability.logger\",\n    \"pathlib\",\n    \"json\"\n  ]\n}",
+      "suggestion": "Defines API endpoints for running various agents for code review, documentation, and tech debt analysis.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/api/chat.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/api/chat.py\",\n  \"purpose\": \"This module defines the API endpoints for handling chat requests and feedback submissions.\",\n  \"classes\": [\n    {\n      \"name\": \"ChatRequest\",\n      \"description\": \"Pydantic model for the chat request body.\",\n      \"methods\": []\n    },\n    {\n      \"name\": \"SourceInfo\",\n      \"description\": \"Pydantic model for source information.\",\n      \"methods\": []\n    },\n    {\n      \"name\": \"GuardrailsInfo\",\n      \"description\": \"Pydantic model for guardrails information.\",\n      \"methods\": []\n    },\n    {\n      \"name\": \"ChatResponse\",\n      \"description\": \"Pydantic model for the chat response.\",\n      \"methods\": []\n    },\n    {\n      \"name\": \"FeedbackRequest\",\n      \"description\": \"Pydantic model for the feedback request body.\",\n      \"methods\": []\n    },\n    {\n      \"name\": \"FeedbackResponse\",\n      \"description\": \"Pydantic model for the feedback response.\",\n      \"methods\": []\n    }\n  ],\n  \"functions\": [\n    {\n      \"name\": \"chat\",\n      \"description\": \"Handles chat requests, generates answers using RAG, and returns the response.\",\n      \"params\": \"request: Request, body: ChatRequest, _api_key: str | None\",\n      \"returns\": \"ChatResponse\"\n    },\n    {\n      \"name\": \"submit_feedback\",\n      \"description\": \"Handles feedback submissions and updates the audit log.\",\n      \"params\": \"request: Request, body: FeedbackRequest, _api_key: str | None\",\n      \"returns\": \"FeedbackResponse\"\n    }\n  ],\n  \"endpoints\": [\n    {\n      \"method\": \"POST\",\n      \"path\": \"/api/chat/\",\n      \"description\": \"Handles chat requests. Accepts a question and optional top_k parameter, returns an answer, sources, query, guardrails information, and request ID.\"\n    },\n    {\n      \"method\": \"POST\",\n      \"path\": \"/api/chat/feedback\",\n      \"description\": \"Handles feedback submissions. Accepts a request ID, rating, and optional comment, and returns a status and request ID.\"\n    }\n  ],\n  \"dependencies\": [\n    \"fastapi\",\n    \"pydantic\",\n    \"app.config\",\n    \"app.core.llm\",\n    \"app.core.rag\",\n    \"app.middleware.auth\",\n    \"app.middleware.rate_limit\",\n    \"app.observability.audit\",\n    \"app.observability.logger\",\n    \"re\"\n  ]\n}",
+      "suggestion": "This module defines the API endpoints for handling chat requests and feedback submissions.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/api/governance.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/api/governance.py\",\n  \"purpose\": \"This module defines the API endpoint for retrieving a governance summary.\",\n  \"classes\": [],\n  \"functions\": [\n    {\n      \"name\": \"governance_summary\",\n      \"description\": \"Retrieves and returns the governance summary.\",\n      \"params\": \"request: Request, _api_key: str | None\",\n      \"returns\": \"dict\"\n    }\n  ],\n  \"endpoints\": [\n    {\n      \"method\": \"GET\",\n      \"path\": \"/api/governance/summary\",\n      \"description\": \"Retrieves the governance summary.\"\n    }\n  ],\n  \"dependencies\": [\n    \"fastapi\",\n    \"app.config\",\n    \"app.middleware.auth\",\n    \"app.middleware.rate_limit\",\n    \"app.observability.audit\",\n    \"app.observability.logger\"\n  ]\n}",
+      "suggestion": "This module defines the API endpoint for retrieving a governance summary.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/evaluation/metrics.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/evaluation/metrics.py\",\n  \"purpose\": \"This module defines functions for evaluating information retrieval performance using metrics like precision, recall, reciprocal rank, and mean reciprocal rank.\",\n  \"classes\": [],\n  \"functions\": [\n    {\n      \"name\": \"precision_at_k\",\n      \"description\": \"Calculates the precision at k for a given set of retrieved and relevant document IDs.\",\n      \"params\": \"retrieved_ids: list[str], relevant_ids: set[str], k: int\",\n      \"returns\": \"float\"\n    },\n    {\n      \"name\": \"recall_at_k\",\n      \"description\": \"Calculates the recall at k for a given set of retrieved and relevant document IDs.\",\n      \"params\": \"retrieved_ids: list[str], relevant_ids: set[str], k: int\",\n      \"returns\": \"float\"\n    },\n    {\n      \"name\": \"reciprocal_rank\",\n      \"description\": \"Calculates the reciprocal rank for a given set of retrieved and relevant document IDs.\",\n      \"params\": \"retrieved_ids: list[str], relevant_ids: set[str]\",\n      \"returns\": \"float\"\n    },\n    {\n      \"name\": \"mean_reciprocal_rank\",\n      \"description\": \"Calculates the mean reciprocal rank across multiple queries.\",\n      \"params\": \"queries_results: list[tuple[list[str], set[str]]]\",\n      \"returns\": \"float\"\n    },\n    {\n      \"name\": \"evaluate_retrieval\",\n      \"description\": \"Calculates precision, recall, and reciprocal rank for a given set of retrieved and relevant document IDs.\",\n      \"params\": \"retrieved_ids: list[str], relevant_ids: set[str], k: int = 5\",\n      \"returns\": \"dict\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": []\n}",
+      "suggestion": "This module defines functions for evaluating information retrieval performance using metrics like precision, recall, reciprocal rank, and mean reciprocal rank.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/evaluation/__init__.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/evaluation/__init__.py\",\n  \"purpose\": \"This is an empty initialization file for the `app.evaluation` module.\",\n  \"classes\": [],\n  \"functions\": [],\n  \"endpoints\": [],\n  \"dependencies\": []\n}",
+      "suggestion": "This is an empty initialization file for the `app.evaluation` module.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/app/evaluation/judge.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/app/evaluation/judge.py\",\n  \"purpose\": \"This module defines a function to evaluate the quality of a RAG (Retrieval-Augmented Generation) response using an LLM-as-judge.\",\n  \"classes\": [],\n  \"functions\": [\n    {\n      \"name\": \"evaluate_response\",\n      \"description\": \"Use LLM-as-judge to evaluate a RAG response.\",\n      \"params\": \"question: str, context: str, answer: str\",\n      \"returns\": \"dict: A dictionary containing the evaluation scores, reasoning, overall score, and summary.\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"json\",\n    \"re\",\n    \"app.core.llm\",\n    \"app.observability.logger\"\n  ]\n}",
+      "suggestion": "This module defines a function to evaluate the quality of a RAG (Retrieval-Augmented Generation) response using an LLM-as-judge.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/scripts/ingest.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/scripts/ingest.py\",\n  \"purpose\": \"This script ingests data from a source markdown file, chunks it, and upserts it into a Pinecone vector database.\",\n  \"classes\": [],\n  \"functions\": [\n    {\n      \"name\": \"main\",\n      \"description\": \"Main function to read, chunk, and upsert data into Pinecone.\",\n      \"params\": \"\",\n      \"returns\": \"None\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"sys\",\n    \"pathlib\",\n    \"app.config\",\n    \"app.core.chunking\",\n    \"app.core.vectorstore\",\n    \"app.observability.logger\"\n  ]\n}",
+      "suggestion": "This script ingests data from a source markdown file, chunks it, and upserts it into a Pinecone vector database.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-backend/scripts/run_agents.py",
+      "description": "{\n  \"file_path\": \"rocket-faq-backend/scripts/run_agents.py\",\n  \"purpose\": \"CLI entry point for running AI agents to analyze the Rocket FAQ codebase.\",\n  \"classes\": [],\n  \"functions\": [\n    {\n      \"name\": \"main\",\n      \"description\": \"Parses command-line arguments to determine which agents to run, then executes them using the AgentCoordinator. Prints reports to the console and saves them to files.\",\n      \"params\": \"None\",\n      \"returns\": \"None\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"argparse\",\n    \"json\",\n    \"sys\",\n    \"pathlib.Path\",\n    \"app.observability.logger\",\n    \"app.agents.coordinator\"\n  ]\n}",
+      "suggestion": "CLI entry point for running AI agents to analyze the Rocket FAQ codebase.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-frontend/src/api/client.ts",
+      "description": "{\n  \"file_path\": \"rocket-faq-frontend/src/api/client.ts\",\n  \"purpose\": \"Defines the API client for interacting with the backend, including interfaces for data structures and functions for making API calls.\",\n  \"classes\": [],\n  \"functions\": [\n    {\n      \"name\": \"normalizeApiBase\",\n      \"description\": \"Normalizes the API base URL by trimming trailing slashes and ensuring it ends with '/api'.\",\n      \"params\": \"rawBase: string\",\n      \"returns\": \"string\"\n    },\n    {\n      \"name\": \"getHeaders\",\n      \"description\": \"Constructs the headers for API requests, including Content-Type and API Key if available.\",\n      \"params\": \"None\",\n      \"returns\": \"Record<string, string>\"\n    },\n    {\n      \"name\": \"checkResponseStatus\",\n      \"description\": \"Checks the HTTP response status and throws an error for specific status codes (429, 503).\",\n      \"params\": \"res: Response\",\n      \"returns\": \"void\"\n    },\n    {\n      \"name\": \"sendMessage\",\n      \"description\": \"Sends a question to the chat endpoint and returns the chat response.\",\n      \"params\": \"question: string\",\n      \"returns\": \"Promise<ChatResponse>\"\n    },\n    {\n      \"name\": \"submitFeedback\",\n      \"description\": \"Submits feedback for a chat request.\",\n      \"params\": \"requestId: string, rating: 'positive' | 'negative', comment?: string\",\n      \"returns\": \"Promise<{ status: string }>\"\n    },\n    {\n      \"name\": \"evaluateWithJudge\",\n      \"description\": \"Evaluates a question and answer pair using a judge model.\",\n      \"params\": \"question: string\",\n      \"returns\": \"Promise<JudgeResponse>\"\n    },\n    {\n      \"name\": \"runRetrievalEval\",\n      \"description\": \"Runs a retrieval evaluation.\",\n      \"params\": \"k: number = 5\",\n      \"returns\": \"Promise<any>\"\n    },\n    {\n      \"name\": \"runFullEval\",\n      \"description\": \"Runs a full evaluation.\",\n      \"params\": \"None\",\n      \"returns\": \"Promise<any>\"\n    },\n    {\n      \"name\": \"getStats\",\n      \"description\": \"Retrieves statistics from the backend.\",\n      \"params\": \"None\",\n      \"returns\": \"Promise<any>\"\n    },\n    {\n      \"name\": \"getGovernanceSummary\",\n      \"description\": \"Retrieves a governance summary from the backend.\",\n      \"params\": \"None\",\n      \"returns\": \"Promise<any>\"\n    },\n    {\n      \"name\": \"getAgentReports\",\n      \"description\": \"Retrieves a list of agent reports from the backend.\",\n      \"params\": \"None\",\n      \"returns\": \"Promise<any>\"\n    },\n    {\n      \"name\": \"getAgentReport\",\n      \"description\": \"Retrieves a specific agent report by filename.\",\n      \"params\": \"filename: string\",\n      \"returns\": \"Promise<any>\"\n    },\n    {\n      \"name\": \"runAgent\",\n      \"description\": \"Runs a specific agent type.\",\n      \"params\": \"type: 'review' | 'document' | 'tech-debt' | 'full'\",\n      \"returns\": \"Promise<any>\"\n    }\n  ],\n  \"endpoints\": [\n    {\n      \"method\": \"POST\",\n      \"path\": \"/api/chat/\",\n      \"description\": \"Sends a question to the chat endpoint.\"\n    },\n    {\n      \"method\": \"POST\",\n      \"path\": \"/api/chat/feedback\",\n      \"description\": \"Submits feedback for a chat request.\"\n    },\n    {\n      \"method\": \"POST\",\n      \"path\": \"/api/eval/judge\",\n      \"description\": \"Evaluates a question and answer pair using a judge model.\"\n    },\n    {\n      \"method\": \"POST\",\n      \"path\": \"/api/eval/retrieval\",\n      \"description\": \"Runs a retrieval evaluation.\"\n    },\n    {\n      \"method\": \"POST\",\n      \"path\": \"/api/eval/full\",\n      \"description\": \"Runs a full evaluation.\"\n    },\n    {\n      \"method\": \"GET\",\n      \"path\": \"/stats\",\n      \"description\": \"Retrieves statistics from the backend.\"\n    },\n    {\n      \"method\": \"GET\",\n      \"path\": \"/api/governance/summary\",\n      \"description\": \"Retrieves a governance summary from the backend.\"\n    },\n    {\n      \"method\": \"GET\",\n      \"path\": \"/api/agents/reports\",\n      \"description\": \"Retrieves a list of agent reports from the backend.\"\n    },\n    {\n      \"method\": \"GET\",\n      \"path\": \"/api/agents/reports/:filename\",\n      \"description\": \"Retrieves a specific agent report by filename.\"\n    },\n    {\n      \"method\": \"POST\",\n      \"path\": \"/api/agents/:type\",\n      \"description\": \"Runs a specific agent type.\"\n    }\n  ],\n  \"dependencies\": []\n}",
+      "suggestion": "Defines the API client for interacting with the backend, including interfaces for data structures and functions for making API calls.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-frontend/src/App.tsx",
+      "description": "{\n  \"file_path\": \"rocket-faq-frontend/src/App.tsx\",\n  \"purpose\": \"The main application component that renders the header and conditionally renders the ChatWindow, EvalPanel, or DashboardPanel based on the active tab.\",\n  \"classes\": [],\n  \"functions\": [],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"react\",\n    \"./components/Header\",\n    \"./components/ChatWindow\",\n    \"./components/EvalPanel\",\n    \"./components/DashboardPanel\"\n  ]\n}",
+      "suggestion": "The main application component that renders the header and conditionally renders the ChatWindow, EvalPanel, or DashboardPanel based on the active tab.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-frontend/src/main.tsx",
+      "description": "{\n  \"file_path\": \"rocket-faq-frontend/src/main.tsx\",\n  \"purpose\": \"This is the main entry point for the React application. It renders the App component within a StrictMode.\",\n  \"classes\": [],\n  \"functions\": [],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"react\",\n    \"react-dom/client\",\n    \"./index.css\",\n    \"./App\"\n  ]\n}",
+      "suggestion": "This is the main entry point for the React application. It renders the App component within a StrictMode.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-frontend/src/components/ChatWindow.tsx",
+      "description": "{\n  \"file_path\": \"rocket-faq-frontend/src/components/ChatWindow.tsx\",\n  \"purpose\": \"This component provides a chat interface for users to ask questions and receive answers. It handles sending messages, displaying responses, and submitting feedback.\",\n  \"classes\": [],\n  \"functions\": [\n    {\n      \"name\": \"ChatWindow\",\n      \"description\": \"Main component function that renders the chat window.\",\n      \"params\": \"None\",\n      \"returns\": \"JSX.Element\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"react\",\n    \"./ChatMessage\",\n    \"../api/client\"\n  ]\n}",
+      "suggestion": "This component provides a chat interface for users to ask questions and receive answers. It handles sending messages, displaying responses, and submitting feedback.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-frontend/src/components/EvalPanel.tsx",
+      "description": "{\n  \"file_path\": \"rocket-faq-frontend/src/components/EvalPanel.tsx\",\n  \"purpose\": \"This component provides a user interface for running RAG (Retrieval-Augmented Generation) evaluation metrics.\",\n  \"classes\": [],\n  \"functions\": [\n    {\n      \"name\": \"EvalPanel\",\n      \"description\": \"Main component function that renders the evaluation panel.\",\n      \"params\": \"None\",\n      \"returns\": \"JSX.Element\"\n    },\n    {\n      \"name\": \"AggregateMetrics\",\n      \"description\": \"Component to display aggregate metrics in a grid format.\",\n      \"params\": \"{ data: Record<string, any> }\",\n      \"returns\": \"JSX.Element\"\n    },\n    {\n      \"name\": \"DetailedResults\",\n      \"description\": \"Component to display detailed results for each query.\",\n      \"params\": \"{ data: any[] }\",\n      \"returns\": \"JSX.Element\"\n    },\n    {\n      \"name\": \"JudgeResults\",\n      \"description\": \"Component to display LLM-as-Judge evaluation results.\",\n      \"params\": \"{ data: any[] }\",\n      \"returns\": \"JSX.Element\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"react\",\n    \"../api/client\"\n  ]\n}",
+      "suggestion": "This component provides a user interface for running RAG (Retrieval-Augmented Generation) evaluation metrics.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-frontend/src/components/DashboardPanel.tsx",
+      "description": "{\n  \"file_path\": \"rocket-faq-frontend/src/components/DashboardPanel.tsx\",\n  \"purpose\": \"Displays a dashboard with system statistics, governance metrics, and agent reports.\",\n  \"classes\": [],\n  \"functions\": [\n    {\n      \"name\": \"DashboardPanel\",\n      \"description\": \"Main component that fetches and displays dashboard data.\",\n      \"params\": \"None\",\n      \"returns\": \"JSX.Element\"\n    },\n    {\n      \"name\": \"MetricBox\",\n      \"description\": \"Displays a single metric with a label and value.\",\n      \"params\": \"{ label: string; value: string }\",\n      \"returns\": \"JSX.Element\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"react\",\n    \"../api/client\"\n  ]\n}",
+      "suggestion": "Displays a dashboard with system statistics, governance metrics, and agent reports.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-frontend/src/components/Header.tsx",
+      "description": "{\n  \"file_path\": \"rocket-faq-frontend/src/components/Header.tsx\",\n  \"purpose\": \"Displays the header of the application with navigation tabs.\",\n  \"classes\": [],\n  \"functions\": [\n    {\n      \"name\": \"Header\",\n      \"description\": \"Renders the header component with tabs for chat, evaluation, and dashboard.\",\n      \"params\": \"{ activeTab: 'chat' | 'eval' | 'dashboard'; onTabChange: (tab: 'chat' | 'eval' | 'dashboard') => void; }\",\n      \"returns\": \"JSX.Element\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": []\n}",
+      "suggestion": "Displays the header of the application with navigation tabs.",
+      "line_range": ""
+    },
+    {
+      "category": "documentation",
+      "severity": "info",
+      "file_path": "rocket-faq-frontend/src/components/ChatMessage.tsx",
+      "description": "{\n  \"file_path\": \"rocket-faq-frontend/src/components/ChatMessage.tsx\",\n  \"purpose\": \"Displays a single chat message with optional sources, guardrails, and feedback options.\",\n  \"classes\": [],\n  \"functions\": [\n    {\n      \"name\": \"ChatMessage\",\n      \"description\": \"Renders a chat message with associated metadata.\",\n      \"params\": \"{ role: 'user' | 'assistant'; content: string; sources?: SourceInfo[]; requestId?: string; guardrails?: GuardrailsInfo; feedback?: 'positive' | 'negative' | null; onFeedback?: (rating: 'positive' | 'negative') => void; }\",\n      \"returns\": \"JSX.Element\"\n    }\n  ],\n  \"endpoints\": [],\n  \"dependencies\": [\n    \"react\",\n    \"../api/client\"\n  ]\n}",
+      "suggestion": "Displays a single chat message with optional sources, guardrails, and feedback options.",
+      "line_range": ""
+    }
+  ],
+  "recommendations": [
+    "Add module-level docstrings to files missing them",
+    "Add type hints to function parameters that lack them",
+    "Document configuration environment variables",
+    "Add inline comments for complex business logic",
+    "Create an architecture diagram showing component relationships"
+  ],
+  "metadata": {
+    "files_analyzed": 48,
+    "file_list": [
+      "rocket-faq-backend/app/config.py",
+      "rocket-faq-backend/app/__init__.py",
+      "rocket-faq-backend/app/main.py",
+      "rocket-faq-backend/app/middleware/auth.py",
+      "rocket-faq-backend/app/middleware/security.py",
+      "rocket-faq-backend/app/middleware/__init__.py",
+      "rocket-faq-backend/app/middleware/rate_limit.py",
+      "rocket-faq-backend/app/core/chunking.py",
+      "rocket-faq-backend/app/core/vectorstore.py",
+      "rocket-faq-backend/app/core/cache.py",
+      "rocket-faq-backend/app/core/__init__.py",
+      "rocket-faq-backend/app/core/llm.py",
+      "rocket-faq-backend/app/core/embeddings.py",
+      "rocket-faq-backend/app/core/rag.py",
+      "rocket-faq-backend/app/guardrails/injection.py",
+      "rocket-faq-backend/app/guardrails/__init__.py",
+      "rocket-faq-backend/app/guardrails/topic.py",
+      "rocket-faq-backend/app/guardrails/output.py",
+      "rocket-faq-backend/app/guardrails/pii.py",
+      "rocket-faq-backend/app/agents/tech_debt.py",
+      "rocket-faq-backend/app/agents/coordinator.py",
+      "rocket-faq-backend/app/agents/models.py",
+      "rocket-faq-backend/app/agents/code_reviewer.py",
+      "rocket-faq-backend/app/agents/__init__.py",
+      "rocket-faq-backend/app/agents/documenter.py",
+      "rocket-faq-backend/app/agents/base.py",
+      "rocket-faq-backend/app/observability/cost_tracker.py",
+      "rocket-faq-backend/app/observability/audit.py",
+      "rocket-faq-backend/app/observability/__init__.py",
+      "rocket-faq-backend/app/observability/logger.py",
+      "rocket-faq-backend/app/api/evaluation.py",
+      "rocket-faq-backend/app/api/__init__.py",
+      "rocket-faq-backend/app/api/agents.py",
+      "rocket-faq-backend/app/api/chat.py",
+      "rocket-faq-backend/app/api/governance.py",
+      "rocket-faq-backend/app/evaluation/metrics.py",
+      "rocket-faq-backend/app/evaluation/__init__.py",
+      "rocket-faq-backend/app/evaluation/judge.py",
+      "rocket-faq-backend/scripts/ingest.py",
+      "rocket-faq-backend/scripts/run_agents.py",
+      "rocket-faq-frontend/src/api/client.ts",
+      "rocket-faq-frontend/src/App.tsx",
+      "rocket-faq-frontend/src/main.tsx",
+      "rocket-faq-frontend/src/components/ChatWindow.tsx",
+      "rocket-faq-frontend/src/components/EvalPanel.tsx",
+      "rocket-faq-frontend/src/components/DashboardPanel.tsx",
+      "rocket-faq-frontend/src/components/Header.tsx",
+      "rocket-faq-frontend/src/components/ChatMessage.tsx"
+    ],
+    "duration_seconds": 99.45,
+    "markdown_doc": "# Rocket Mortgage FAQ Bot \u2014 Technical Documentation\n\n*Generated: 2026-03-02T18:39:08.030143+00:00*\n\n\n## `rocket-faq-backend/app/config.py`\n\n\nDefines the application settings using Pydantic and provides a cached function to access them.\n\n\n### Class: `Settings`\n\nPydantic model defining the application settings.  Settings are loaded from environment variables and can be overridden.\n\n\n### `get_settings(None)`\n\nReturns a cached instance of the Settings class.\n\n**Returns:** Settings\n\n\n## `rocket-faq-backend/app/__init__.py`\n\n\nThis file indicates that the 'app' directory is a Python package.\n\n\n## `rocket-faq-backend/app/main.py`\n\n\nThis is the main application file that initializes the FastAPI app, sets up middleware, includes routers, and defines health and stats endpoints.\n\n\n### `GET /health`\n\nReturns the health status of the application and cache statistics.\n\n\n### `GET /stats`\n\nReturns usage statistics and cache statistics.\n\n\n## `rocket-faq-backend/app/middleware/auth.py`\n\n\nOptional API key authentication for endpoints.\n\n\n### `verify_api_key(api_key: str | None = Security(_api_key_header))`\n\nVerify API key if one is configured. Skip check if no key is set.\n\n**Returns:** str | None\n\n\n## `rocket-faq-backend/app/middleware/security.py`\n\n\nSecurity headers and request ID middleware.\n\n\n### Class: `SecurityHeadersMiddleware`\n\nAdd standard security headers to every response.\n\n\n### Class: `RequestIDMiddleware`\n\nAttach a unique request ID to each request for tracing.\n\n\n## `rocket-faq-backend/app/middleware/__init__.py`\n\n\nEmpty init file for the middleware package.\n\n\n## `rocket-faq-backend/app/middleware/rate_limit.py`\n\n\nDefines a rate limiting middleware using `slowapi` to protect API endpoints from abuse.\n\n\n### `get_client_ip(request: Request)`\n\nExtracts the client IP address from the request, handling the `X-Forwarded-For` header when present (e.g., behind a proxy like Render).\n\n**Returns:** str: The client IP address.\n\n\n## `rocket-faq-backend/app/core/chunking.py`\n\n\nDefines functions for chunking FAQ documents into smaller, more manageable pieces for vector storage and retrieval.\n\n\n### Class: `Chunk`\n\nRepresents a chunk of text with associated metadata.\n\n\n### `chunk_faq_document(content: str)`\n\nSplits a FAQ markdown document into chunks, where each chunk represents a Q&A pair. Preserves section and subsection context in the metadata.\n\n**Returns:** list[Chunk]: A list of Chunk objects.\n\n\n## `rocket-faq-backend/app/core/vectorstore.py`\n\n\nProvides functions for interacting with a Pinecone vector database, including creating the index, upserting chunks, and searching for similar documents.\n\n\n### `get_pinecone_index()`\n\nRetrieves the Pinecone index. Initializes the connection if it doesn't exist.\n\n**Returns:** Pinecone.Index: The Pinecone index object.\n\n\n### `ensure_index_exists()`\n\nEnsures that the Pinecone index exists. Creates it if it doesn't, using the configured settings.\n\n**Returns:** None\n\n\n### `upsert_chunks(chunks: list[Chunk], batch_size: int = 50)`\n\nUpserts a list of chunks into the Pinecone index.  Generates embeddings for the chunks and uploads them in batches.\n\n**Returns:** None\n\n\n### `search(query: str, top_k: int | None = None)`\n\nSearches the Pinecone index for documents similar to the given query.\n\n**Returns:** list[dict]: A list of dictionaries, where each dictionary represents a search result with 'id', 'score', 'text', and 'metadata'.\n\n\n## `rocket-faq-backend/app/core/cache.py`\n\n\nProvides an in-memory cache with TTL and LRU eviction for RAG responses and embeddings.\n\n\n### `_normalize_question(question: str)`\n\nLowercase, strip whitespace and trailing punctuation for cache key.\n\n**Returns:** str\n\n\n### `_cache_key(text: str)`\n\nGenerate a stable hash key for a text string.\n\n**Returns:** str\n\n\n### `get_cached_rag_response(question: str)`\n\nReturn cached RAGResponse or None.\n\n**Returns:** RAGResponse or None\n\n\n### `set_cached_rag_response(question: str, response)`\n\nStore a RAGResponse in cache.\n\n**Returns:** None\n\n\n### `get_cached_embedding(text: str)`\n\nReturn cached embedding vector or None.\n\n**Returns:** list[float] | None\n\n\n### `set_cached_embedding(text: str, vector: list[float])`\n\nStore an embedding vector in cache.\n\n**Returns:** None\n\n\n### `get_cache_stats()`\n\nReturn current cache statistics for observability.\n\n**Returns:** dict\n\n\n## `rocket-faq-backend/app/core/__init__.py`\n\n\nThis is an empty initialization file for the `app.core` package.\n\n\n## `rocket-faq-backend/app/core/llm.py`\n\n\nProvides functions for interacting with a Language Model (LLM) via the OpenAI API, including budget tracking.\n\n\n### Class: `BudgetExceededError`\n\nRaised when the token budget has been exhausted.\n\n\n### `get_openrouter_client()`\n\nReturns the OpenAI client, initializing it if it doesn't exist.\n\n**Returns:** OpenAI\n\n\n### `chat_completion(messages: list[dict], model: str | None = None, temperature: float = 0.3, max_tokens: int | None = None)`\n\nSends a chat completion request to the LLM and returns the response content.\n\n**Returns:** str\n\n\n## `rocket-faq-backend/app/core/embeddings.py`\n\n\nProvides embedding functionality, allowing switching between local models (sentence-transformers) and the HuggingFace Inference API.\n\n\n### Class: `EmbeddingsProvider`\n\nAbstract base class for embedding providers.\n\n\n### Class: `LocalEmbeddings`\n\nEmbeddings provider using sentence-transformers via LangChain.\n\n\n### Class: `APIEmbeddings`\n\nEmbeddings provider using the HuggingFace Inference API.\n\n\n### `get_embeddings_provider()`\n\nReturns the configured embeddings provider (either LocalEmbeddings or APIEmbeddings).\n\n**Returns:** EmbeddingsProvider\n\n\n## `rocket-faq-backend/app/core/rag.py`\n\n\nImplements the Retrieval-Augmented Generation (RAG) pipeline for answering questions using a knowledge base, including input/output guardrails for security and quality.\n\n\n### Class: `RAGResponse`\n\nData class representing the response from the RAG pipeline.\n\n\n### `generate_answer(query: str, top_k: int | None = None, request_id: str = \"\")`\n\nExecutes the full RAG pipeline, including input guardrails, retrieval, generation, output guardrails, and caching.\n\n**Returns:** RAGResponse\n\n\n## `rocket-faq-backend/app/guardrails/injection.py`\n\n\nDetects prompt injection attacks in user input using regular expression pattern matching.\n\n\n### Class: `InjectionScanResult`\n\nData class representing the result of a prompt injection scan.\n\n\n### `scan_injection(text: str)`\n\nScans the input text for prompt injection patterns and returns an InjectionScanResult.\n\n**Returns:** InjectionScanResult\n\n\n## `rocket-faq-backend/app/guardrails/__init__.py`\n\n\nThis file appears to be an empty initialization file for the `app.guardrails` package. It likely serves to mark the directory as a Python package.\n\n\n## `rocket-faq-backend/app/guardrails/topic.py`\n\n\nThis module provides functionality to detect if a user question is off-topic by checking for mortgage-related keywords and allowing greetings.\n\n\n### Class: `TopicScanResult`\n\nDataclass to store the results of the topic scan.\n\n\n### `scan_topic(question: str)`\n\nChecks if a question is related to mortgages/Rocket Mortgage.\n\n**Returns:** TopicScanResult\n\n\n## `rocket-faq-backend/app/guardrails/output.py`\n\n\nThis module provides output guardrails for LLM responses, including disclaimer injection, PII leak detection, and low confidence flagging.\n\n\n### Class: `OutputGuardrailResult`\n\nDataclass to store the results of the output guardrail processing.\n\n\n### `process_output(answer: str, source_scores: list[float], confidence_threshold: float = 0.5)`\n\nApplies all output guardrails to the LLM response.\n\n**Returns:** OutputGuardrailResult\n\n\n## `rocket-faq-backend/app/guardrails/pii.py`\n\n\nProvides functions for detecting and redacting Personally Identifiable Information (PII) from text using regular expressions. Includes allowlists for specific phone numbers and email domains to avoid redacting known Rocket Mortgage contact information.\n\n\n### Class: `PIIMatch`\n\nDataclass representing a single PII match found in the text.\n\n\n### Class: `PIIScanResult`\n\nDataclass representing the result of a PII scan, including whether PII was found, a list of matches, and the redacted text.\n\n\n### `_normalize_phone(phone: str)`\n\nStrips formatting from a phone number for allowlist comparison.\n\n**Returns:** str\n\n\n### `_is_allowed_phone(phone: str)`\n\nChecks if a phone number is in the allowlist.\n\n**Returns:** bool\n\n\n### `_is_allowed_email(email: str)`\n\nChecks if an email domain is in the allowlist.\n\n**Returns:** bool\n\n\n### `scan_pii(text: str)`\n\nScans text for PII patterns and returns matches with a redacted version of the text.\n\n**Returns:** PIIScanResult\n\n\n### `redact_pii(text: str)`\n\nConvenience wrapper: returns redacted text only.\n\n**Returns:** str\n\n\n## `rocket-faq-backend/app/agents/tech_debt.py`\n\n\nImplements an agent that analyzes code for technical debt using both static analysis (regex-based) and LLM-powered insights.\n\n\n### Class: `TechDebtAgent`\n\nAgent that identifies technical debt, TODOs, complexity, missing tests, and hardcoded values.\n\n\n## `rocket-faq-backend/app/agents/coordinator.py`\n\n\nOrchestrates multiple analysis agents (CodeReviewAgent, TechDebtAgent, DocumenterAgent) to produce a combined report of code quality, technical debt, and documentation status.\n\n\n### Class: `AgentCoordinator`\n\nOrchestrates all analysis agents and produces a combined report.\n\n\n## `rocket-faq-backend/app/agents/models.py`\n\n\nDefines data models for the multi-agent analysis system, including Severity, Finding, AgentReport, and CoordinatorReport.\n\n\n## `rocket-faq-backend/app/agents/code_reviewer.py`\n\n\nImplements the CodeReviewAgent, which analyzes source files for code quality, security vulnerabilities, and best practice violations.\n\n\n### Class: `CodeReviewAgent`\n\nAnalyzes source code for quality issues, security concerns, and best practice violations\n\n\n## `rocket-faq-backend/app/agents/__init__.py`\n\n\nThis is an empty initialization file for the `app.agents` package.\n\n\n## `rocket-faq-backend/app/agents/documenter.py`\n\n\nGenerates comprehensive markdown documentation for the codebase.\n\n\n### Class: `DocumenterAgent`\n\nAgent that generates documentation for the project.\n\n\n## `rocket-faq-backend/app/agents/base.py`\n\n\nProvides a base class for all analysis agents.\n\n\n### Class: `BaseAgent`\n\nAbstract base for analysis agents.\n\n\n## `rocket-faq-backend/app/observability/cost_tracker.py`\n\n\nToken usage tracking with configurable daily/monthly budgets.\n\n\n### Class: `UsageRecord`\n\nDataclass to store token usage information.\n\n\n### Class: `UsageTracker`\n\nIn-memory token usage tracker with daily budget enforcement.\n\n\n## `rocket-faq-backend/app/observability/audit.py`\n\n\nProvides functionality for writing and updating audit logs in JSONL format, and for generating governance summaries from the logs.  The audit logs capture Q&A interactions, including details about PII detection, injection attempts, and user feedback.\n\n\n### Class: `AuditEntry`\n\nData class representing a single audit log entry.\n\n\n### `write_audit_entry(entry: AuditEntry)`\n\nAppends a single audit entry to the audit log file as a JSON line.\n\n**Returns:** None\n\n\n### `update_audit_feedback(request_id: str, rating: str, comment: str | None = None)`\n\nFinds and updates the feedback field for a given request_id in the audit log.\n\n**Returns:** bool\n\n\n### `get_governance_summary(None)`\n\nAggregates statistics from the audit log for the governance endpoint.\n\n**Returns:** dict\n\n\n## `rocket-faq-backend/app/observability/__init__.py`\n\n\nThis is an initialization file for the `app.observability` package. It doesn't contain any code, but its presence indicates that the directory should be treated as a Python package.\n\n\n## `rocket-faq-backend/app/observability/logger.py`\n\n\nConfigures and provides access to a structured logger using structlog.\n\n\n### `setup_logging(None)`\n\nConfigures structlog with processors and settings from the application configuration.\n\n**Returns:** None\n\n\n### `get_logger(name: str = __name__)`\n\nReturns a structlog BoundLogger instance.\n\n**Returns:** structlog.BoundLogger\n\n\n## `rocket-faq-backend/app/api/evaluation.py`\n\n\nDefines API endpoints for evaluating the RAG system, including retrieval quality and response quality using LLM-as-judge.\n\n\n### Class: `EvalRetrievalRequest`\n\nRequest model for retrieval evaluation, specifying the number of top results to consider.\n\n\n### Class: `SingleEvalResult`\n\nResponse model for a single query's retrieval evaluation results.\n\n\n### Class: `RetrievalEvalResponse`\n\nResponse model for retrieval evaluation, containing results for all queries and aggregate metrics.\n\n\n### Class: `JudgeRequest`\n\nRequest model for judging a single question.\n\n\n### Class: `JudgeResponse`\n\nResponse model for judging a single question, including the answer, evaluation, and sources.\n\n\n### Class: `FullEvalResponse`\n\nResponse model for the full evaluation, including retrieval metrics, judge evaluations, and an overall summary.\n\n\n### `POST /api/eval/retrieval`\n\nEvaluates retrieval quality using precision, recall, and MRR. Requires an API key. Rate limited.\n\n\n### `POST /api/eval/judge`\n\nEvaluates a single question using LLM-as-judge. Requires an API key. Rate limited.\n\n\n### `POST /api/eval/full`\n\nRuns a full evaluation: retrieval metrics + LLM-as-judge on all test queries. Requires an API key. Rate limited.\n\n\n## `rocket-faq-backend/app/api/__init__.py`\n\n\nThis file serves as an initialization module for the `app.api` package. Currently, it doesn't contain any code, but it allows the directory to be treated as a Python package.\n\n\n## `rocket-faq-backend/app/api/agents.py`\n\n\nDefines API endpoints for running various agents for code review, documentation, and tech debt analysis.\n\n\n### `_run_agent(agent_name: str)`\n\nRuns a single agent, saves the report, and returns the results.\n\n**Returns:** dict\n\n\n### `POST /api/agents/review`\n\nRuns the code review agent. Requires an API key. Rate limited.\n\n\n### `POST /api/agents/document`\n\nRuns the documenter agent. Requires an API key. Rate limited.\n\n\n### `POST /api/agents/tech-debt`\n\nRuns the tech debt analyzer agent. Requires an API key. Rate limited.\n\n\n### `POST /api/agents/full`\n\nRuns all agents via the coordinator. Requires an API key. Rate limited.\n\n\n### `GET /api/agents/reports`\n\nLists all saved agent reports. Requires an API key. Rate limited.\n\n\n### `GET /api/agents/reports/{filename}`\n\nGets a specific saved report by filename. Requires an API key. Rate limited.\n\n\n## `rocket-faq-backend/app/api/chat.py`\n\n\nThis module defines the API endpoints for handling chat requests and feedback submissions.\n\n\n### Class: `ChatRequest`\n\nPydantic model for the chat request body.\n\n\n### Class: `SourceInfo`\n\nPydantic model for source information.\n\n\n### Class: `GuardrailsInfo`\n\nPydantic model for guardrails information.\n\n\n### Class: `ChatResponse`\n\nPydantic model for the chat response.\n\n\n### Class: `FeedbackRequest`\n\nPydantic model for the feedback request body.\n\n\n### Class: `FeedbackResponse`\n\nPydantic model for the feedback response.\n\n\n### `chat(request: Request, body: ChatRequest, _api_key: str | None)`\n\nHandles chat requests, generates answers using RAG, and returns the response.\n\n**Returns:** ChatResponse\n\n\n### `submit_feedback(request: Request, body: FeedbackRequest, _api_key: str | None)`\n\nHandles feedback submissions and updates the audit log.\n\n**Returns:** FeedbackResponse\n\n\n### `POST /api/chat/`\n\nHandles chat requests. Accepts a question and optional top_k parameter, returns an answer, sources, query, guardrails information, and request ID.\n\n\n### `POST /api/chat/feedback`\n\nHandles feedback submissions. Accepts a request ID, rating, and optional comment, and returns a status and request ID.\n\n\n## `rocket-faq-backend/app/api/governance.py`\n\n\nThis module defines the API endpoint for retrieving a governance summary.\n\n\n### `governance_summary(request: Request, _api_key: str | None)`\n\nRetrieves and returns the governance summary.\n\n**Returns:** dict\n\n\n### `GET /api/governance/summary`\n\nRetrieves the governance summary.\n\n\n## `rocket-faq-backend/app/evaluation/metrics.py`\n\n\nThis module defines functions for evaluating information retrieval performance using metrics like precision, recall, reciprocal rank, and mean reciprocal rank.\n\n\n### `precision_at_k(retrieved_ids: list[str], relevant_ids: set[str], k: int)`\n\nCalculates the precision at k for a given set of retrieved and relevant document IDs.\n\n**Returns:** float\n\n\n### `recall_at_k(retrieved_ids: list[str], relevant_ids: set[str], k: int)`\n\nCalculates the recall at k for a given set of retrieved and relevant document IDs.\n\n**Returns:** float\n\n\n### `reciprocal_rank(retrieved_ids: list[str], relevant_ids: set[str])`\n\nCalculates the reciprocal rank for a given set of retrieved and relevant document IDs.\n\n**Returns:** float\n\n\n### `mean_reciprocal_rank(queries_results: list[tuple[list[str], set[str]]])`\n\nCalculates the mean reciprocal rank across multiple queries.\n\n**Returns:** float\n\n\n### `evaluate_retrieval(retrieved_ids: list[str], relevant_ids: set[str], k: int = 5)`\n\nCalculates precision, recall, and reciprocal rank for a given set of retrieved and relevant document IDs.\n\n**Returns:** dict\n\n\n## `rocket-faq-backend/app/evaluation/__init__.py`\n\n\nThis is an empty initialization file for the `app.evaluation` module.\n\n\n## `rocket-faq-backend/app/evaluation/judge.py`\n\n\nThis module defines a function to evaluate the quality of a RAG (Retrieval-Augmented Generation) response using an LLM-as-judge.\n\n\n### `evaluate_response(question: str, context: str, answer: str)`\n\nUse LLM-as-judge to evaluate a RAG response.\n\n**Returns:** dict: A dictionary containing the evaluation scores, reasoning, overall score, and summary.\n\n\n## `rocket-faq-backend/scripts/ingest.py`\n\n\nThis script ingests data from a source markdown file, chunks it, and upserts it into a Pinecone vector database.\n\n\n### `main()`\n\nMain function to read, chunk, and upsert data into Pinecone.\n\n**Returns:** None\n\n\n## `rocket-faq-backend/scripts/run_agents.py`\n\n\nCLI entry point for running AI agents to analyze the Rocket FAQ codebase.\n\n\n### `main(None)`\n\nParses command-line arguments to determine which agents to run, then executes them using the AgentCoordinator. Prints reports to the console and saves them to files.\n\n**Returns:** None\n\n\n## `rocket-faq-frontend/src/api/client.ts`\n\n\nDefines the API client for interacting with the backend, including interfaces for data structures and functions for making API calls.\n\n\n### `normalizeApiBase(rawBase: string)`\n\nNormalizes the API base URL by trimming trailing slashes and ensuring it ends with '/api'.\n\n**Returns:** string\n\n\n### `getHeaders(None)`\n\nConstructs the headers for API requests, including Content-Type and API Key if available.\n\n**Returns:** Record<string, string>\n\n\n### `checkResponseStatus(res: Response)`\n\nChecks the HTTP response status and throws an error for specific status codes (429, 503).\n\n**Returns:** void\n\n\n### `sendMessage(question: string)`\n\nSends a question to the chat endpoint and returns the chat response.\n\n**Returns:** Promise<ChatResponse>\n\n\n### `submitFeedback(requestId: string, rating: 'positive' | 'negative', comment?: string)`\n\nSubmits feedback for a chat request.\n\n**Returns:** Promise<{ status: string }>\n\n\n### `evaluateWithJudge(question: string)`\n\nEvaluates a question and answer pair using a judge model.\n\n**Returns:** Promise<JudgeResponse>\n\n\n### `runRetrievalEval(k: number = 5)`\n\nRuns a retrieval evaluation.\n\n**Returns:** Promise<any>\n\n\n### `runFullEval(None)`\n\nRuns a full evaluation.\n\n**Returns:** Promise<any>\n\n\n### `getStats(None)`\n\nRetrieves statistics from the backend.\n\n**Returns:** Promise<any>\n\n\n### `getGovernanceSummary(None)`\n\nRetrieves a governance summary from the backend.\n\n**Returns:** Promise<any>\n\n\n### `getAgentReports(None)`\n\nRetrieves a list of agent reports from the backend.\n\n**Returns:** Promise<any>\n\n\n### `getAgentReport(filename: string)`\n\nRetrieves a specific agent report by filename.\n\n**Returns:** Promise<any>\n\n\n### `runAgent(type: 'review' | 'document' | 'tech-debt' | 'full')`\n\nRuns a specific agent type.\n\n**Returns:** Promise<any>\n\n\n### `POST /api/chat/`\n\nSends a question to the chat endpoint.\n\n\n### `POST /api/chat/feedback`\n\nSubmits feedback for a chat request.\n\n\n### `POST /api/eval/judge`\n\nEvaluates a question and answer pair using a judge model.\n\n\n### `POST /api/eval/retrieval`\n\nRuns a retrieval evaluation.\n\n\n### `POST /api/eval/full`\n\nRuns a full evaluation.\n\n\n### `GET /stats`\n\nRetrieves statistics from the backend.\n\n\n### `GET /api/governance/summary`\n\nRetrieves a governance summary from the backend.\n\n\n### `GET /api/agents/reports`\n\nRetrieves a list of agent reports from the backend.\n\n\n### `GET /api/agents/reports/:filename`\n\nRetrieves a specific agent report by filename.\n\n\n### `POST /api/agents/:type`\n\nRuns a specific agent type.\n\n\n## `rocket-faq-frontend/src/App.tsx`\n\n\nThe main application component that renders the header and conditionally renders the ChatWindow, EvalPanel, or DashboardPanel based on the active tab.\n\n\n## `rocket-faq-frontend/src/main.tsx`\n\n\nThis is the main entry point for the React application. It renders the App component within a StrictMode.\n\n\n## `rocket-faq-frontend/src/components/ChatWindow.tsx`\n\n\nThis component provides a chat interface for users to ask questions and receive answers. It handles sending messages, displaying responses, and submitting feedback.\n\n\n### `ChatWindow(None)`\n\nMain component function that renders the chat window.\n\n**Returns:** JSX.Element\n\n\n## `rocket-faq-frontend/src/components/EvalPanel.tsx`\n\n\nThis component provides a user interface for running RAG (Retrieval-Augmented Generation) evaluation metrics.\n\n\n### `EvalPanel(None)`\n\nMain component function that renders the evaluation panel.\n\n**Returns:** JSX.Element\n\n\n### `AggregateMetrics({ data: Record<string, any> })`\n\nComponent to display aggregate metrics in a grid format.\n\n**Returns:** JSX.Element\n\n\n### `DetailedResults({ data: any[] })`\n\nComponent to display detailed results for each query.\n\n**Returns:** JSX.Element\n\n\n### `JudgeResults({ data: any[] })`\n\nComponent to display LLM-as-Judge evaluation results.\n\n**Returns:** JSX.Element\n\n\n## `rocket-faq-frontend/src/components/DashboardPanel.tsx`\n\n\nDisplays a dashboard with system statistics, governance metrics, and agent reports.\n\n\n### `DashboardPanel(None)`\n\nMain component that fetches and displays dashboard data.\n\n**Returns:** JSX.Element\n\n\n### `MetricBox({ label: string; value: string })`\n\nDisplays a single metric with a label and value.\n\n**Returns:** JSX.Element\n\n\n## `rocket-faq-frontend/src/components/Header.tsx`\n\n\nDisplays the header of the application with navigation tabs.\n\n\n### `Header({ activeTab: 'chat' | 'eval' | 'dashboard'; onTabChange: (tab: 'chat' | 'eval' | 'dashboard') => void; })`\n\nRenders the header component with tabs for chat, evaluation, and dashboard.\n\n**Returns:** JSX.Element\n\n\n## `rocket-faq-frontend/src/components/ChatMessage.tsx`\n\n\nDisplays a single chat message with optional sources, guardrails, and feedback options.\n\n\n### `ChatMessage({ role: 'user' | 'assistant'; content: string; sources?: SourceInfo[]; requestId?: string; guardrails?: GuardrailsInfo; feedback?: 'positive' | 'negative' | null; onFeedback?: (rating: 'positive' | 'negative') => void; })`\n\nRenders a chat message with associated metadata.\n\n**Returns:** JSX.Element\n"
+  }
+}
